@@ -18,7 +18,10 @@ for filename in os.listdir(path_folder_fasta):
         files_directory_fasta.append(f)
 
 #deuxième façon pour itérer dans le dossier fasta
-
+"""
+path_folder_fasta = Path(path_folder_fasta)
+files_directory_fasta = path_folder_fasta.iterdir()
+"""
 
 #création des dicos pour compter les occurences.................................
 

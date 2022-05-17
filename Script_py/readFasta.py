@@ -23,3 +23,4 @@ def readFastaMul(nomFi):
             tmp=(nom,''.join(seq))
             lesSeq.append(tmp)
     return lesSeq
+    

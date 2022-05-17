@@ -56,8 +56,8 @@ def Clustering( matrice_id, dist):
 if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
-    path_main_folder =  "/home/ctoussaint/Clara"
-    name_folder_cluster= "fichiers_cluster"
+    path_main_folder =  "/home/ctoussaint"
+    name_folder_cluster= "cluster"
     name_folder_fasta = "test"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
@@ -106,16 +106,18 @@ if __name__ == '__main__':
         file_name_cluster = open(file_name_cluster, "w")
 
         for cle in dico_cluster:
-            count = 0
-            for dic in dico_cluster[cle] :
-                count+=1
+            
+            count = len( dico_cluster[cle])
             ligne = '>'+ str(cle) + " " + str(count) + " "
 
+            result_text = ""
             for d in dico_cluster[cle]:
+                print
                 # > <num_cluster> <nb_seq> name_seq
                 name = ligne + d['name'] + "\n"
-                file_name_cluster.write(name)
                 seq = d['seq'] + "\n"
-                file_name_cluster.write(seq)
+                result_text += name + seq
+
+            file_name_cluster.write(result_text)
 
         t.stop("Time to convert 2 fasta files")

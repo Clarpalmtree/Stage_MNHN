@@ -43,7 +43,7 @@ for aa1 in liste_aa:
 for files in files_directory_fasta :
     seq= RF.readFastaMul(files)
     d_occ_AA, tot_AA= MP.occurence_AA(seq, d_occ_AA)
-    d_occ_pair, tot_pairs = MP.occurence_pair(seq, d_occ_pair)
+    d_occ_pair, tot_pairs = MP.occurence_couple(seq, d_occ_pair)
 
 #calcule des fréquences.........................................................
 

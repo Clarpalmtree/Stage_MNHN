@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
 import readFasta as RF
-import Matrice_sim as MS
+import Similarite as MS
 import File_Cluster as FC
 
 ##TEST FILE : Matrice_sim.......................................................

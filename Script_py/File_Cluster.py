@@ -57,8 +57,8 @@ if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
     path_main_folder =  "/home/ctoussaint"
-    name_folder_cluster= "cluster"
-    name_folder_fasta = "test"
+    name_folder_cluster= "fichiers_cluster"
+    name_folder_fasta = "Pfam_fasta"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 

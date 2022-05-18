@@ -28,5 +28,5 @@ def nbreSeed(path_folder_fasta):   # étape de pré-traitement à ajouter pour �
 
 
 if __name__ == '__main__':
-    path_folder_fasta = "/Users/pauline/Desktop/Pfam_fasta_99"
+    path_folder_fasta = "/home/ctoussaint/fichiers_cluster60"
     nbreSeed(path_folder_fasta)

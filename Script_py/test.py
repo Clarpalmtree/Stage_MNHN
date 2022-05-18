@@ -4,9 +4,10 @@ import ID
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
-import readFasta as RF
+from readFasta import readFastaMul
 import Similarite as MS
 import File_Cluster as FC
+from EstBonCluster import BonCluster 
 
 ##TEST FILE : Matrice_sim.......................................................
 
@@ -18,7 +19,7 @@ import File_Cluster as FC
 #print ( "Argument 2 de perID : ", liste[ int ( id_seq2[0] ) ] )
 
 #MATRICE SIM
-liSeqAli = rf.readFastaMul("brs.fasta")
+liSeqAli = readFastaMul("brs.fasta")
 matrice_sim = MS.MatriceSim(liSeqAli, "brs.fasta")
 print("MATRICE SIM : ")
 print(matrice_sim, "\n")
@@ -45,3 +46,7 @@ for file_name_fasta in path :
     accession_num = file_name_fasta.name.split(".")[0] + '.' + file_name_fasta.name.split(".")[1]
     file_name_cluster = accession_num + "_cluster" + dist +".fasta"
     print(file_name_cluster)
+
+### TEST FILE : EstBonCluster?..................................................
+liSeqAli = readFastaMul("/home/ctoussaint/fichiers_cluster60/PF00002.27_Cluster60.fasta")
+print(BonCluster(liSeqAli))

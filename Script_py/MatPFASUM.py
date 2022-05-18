@@ -207,7 +207,10 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 
     return df_mat
 
+### TEST CALCUL FREQ PAIR AA.............................................................................
+#........................................................................................................
 
-liSeqAli = readFastaMul("/home/ctoussaint/fichiers_cluster60/PF00006.28_Cluster60.fasta")
+liSeqAli = readFastaMul("./Stage_MNHN/test/brs.fasta_Cluster60.fasta")
+#liSeqAli = readFastaMul("./Stage_MNHN/test/PF00006.28_Cluster60.fasta")
 dico_occ_cluster = createDicoVide(liSeqAli)
 print(create_dico_frequence_acide_amine(liSeqAli, dico_occ_cluster))

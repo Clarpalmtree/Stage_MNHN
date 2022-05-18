@@ -57,7 +57,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
         for k in range (len(seq1)):
 
             if seq1[k] == 'B' :
-                print(seq1[k])
+                
                 if 'D' in dico_occ_cluster[cluster_name_1 ]: 
                     dico_occ_cluster[cluster_name_1]['D'] += 0.5
                 if 'N' in dico_occ_cluster[cluster_name_1] : 
@@ -65,21 +65,21 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
 
             
             if seq1[k] == 'J' :
-                print(seq1[k])
+                
                 if 'E' in dico_occ_cluster[cluster_name_1 ]:
                     dico_occ_cluster[cluster_name_1]['E'] += 0.5
                 if 'Q' in dico_occ_cluster[cluster_name_1 ]:
                     dico_occ_cluster[cluster_name_1]['Q'] += 0.5
             
             if seq1[k] == 'Z' :
-                print(seq1[k])
+                
                 if 'I' in dico_occ_cluster[cluster_name_1 ]:
                     dico_occ_cluster[cluster_name_1]['I'] += 0.5
                 if 'L' in dico_occ_cluster[cluster_name_1] : 
                     dico_occ_cluster[cluster_name_1]['L'] += 0.5
             
             if seq1[k] == 'X' :
-                print(seq1[k])
+                
                 if 'D' in dico_occ_cluster[cluster_name_1 ]:
                     dico_occ_cluster[cluster_name_1]['D'] += 1/20
                 if 'E' in dico_occ_cluster[cluster_name_1 ]:
@@ -126,7 +126,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = dico_occ_cluster[ cluster_name_1 ][seq1[k]] + 1
 
     
-    print(dico_occ_cluster)
+    print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
 
     dico_occ_final = {}
     #diviser occ par la taille du cluster 
@@ -157,7 +157,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
     somme=0
     for AA in dico_occ_final:
         somme+=dico_occ_final[AA]
-    print(somme)
+    print("somme des fréquences = ", somme, "\n")
     
 
     return dico_occ_final
@@ -207,10 +207,17 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 
     return df_mat
 
-### TEST CALCUL FREQ PAIR AA.............................................................................
-#........................................................................................................
+###TEST CALCULE FREQUENCE  PAIR AA ...........................................................
+#.............................................................................................
+#tu a juste à changer le main_path
+main_path = "/home/ctoussaint"
+dossier = "/Stage_MNHN/test/"
+file_one= "PF00006.28_Cluster60.fasta"
+file_two = "brs.fasta_Cluster60.fasta"
+file1 = main_path + dossier + file_one
+file2 =  main_path + dossier + file_two
 
-liSeqAli = readFastaMul("./Stage_MNHN/test/brs.fasta_Cluster60.fasta")
-#liSeqAli = readFastaMul("./Stage_MNHN/test/PF00006.28_Cluster60.fasta")
+#liSeqAli = readFastaMul(file1)
+liSeqAli = readFastaMul(file2)
 dico_occ_cluster = createDicoVide(liSeqAli)
 print(create_dico_frequence_acide_amine(liSeqAli, dico_occ_cluster))

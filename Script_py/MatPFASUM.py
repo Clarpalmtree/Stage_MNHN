@@ -33,6 +33,43 @@ def createDicoVide(liSeqAli):
                 taille_dico = int( name1.split()[1] )
                 dico_occ_cluster[ cluster_name_1 ]["taille_cluster"] = taille_dico    
             
+            if seq1[k] == 'B' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['N'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['D'] = 0
+
+            if seq1[k] == 'J' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['Q'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['E'] = 0
+            
+            if seq1[k] == 'Z' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['I'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['L'] = 0
+
+            if seq1[k] == 'X' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['D'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['E'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['A'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['R'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['N'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['C'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['Q'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['G'] = 0 
+                    dico_occ_cluster[ cluster_name_1 ]['H'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['I'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['L'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['K'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['M'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['F'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['P'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['S'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['T'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['W'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['Y'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['V'] = 0
 
             if seq1[k] in liste_aa : 
                 #si l'acide aminé n'existe pas dans le dico
@@ -48,6 +85,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
     en valeur : la fréquence
     fait par Mathias le bg pour Clara
     """
+    
     #parcours des Séquences
     for i in range(len(liSeqAli)):
     
@@ -55,71 +93,43 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
         name1, seq1 = liSeqAli[i]
         cluster_name_1 = int ( name1.split()[0] )
         for k in range (len(seq1)):
+            
 
+            #condition si on rencontre un aa ambigu
             if seq1[k] == 'B' :
-                
-                if 'D' in dico_occ_cluster[cluster_name_1 ]: 
-                    dico_occ_cluster[cluster_name_1]['D'] += 0.5
-                if 'N' in dico_occ_cluster[cluster_name_1] : 
-                    dico_occ_cluster[cluster_name_1]['N'] += 0.5
+                dico_occ_cluster[cluster_name_1]['D'] += 0.5
+                dico_occ_cluster[cluster_name_1]['N'] += 0.5
 
             
             if seq1[k] == 'J' :
-                
-                if 'E' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['E'] += 0.5
-                if 'Q' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['Q'] += 0.5
+                dico_occ_cluster[cluster_name_1]['E'] += 0.5
+                dico_occ_cluster[cluster_name_1]['Q'] += 0.5
             
-            if seq1[k] == 'Z' :
-                
-                if 'I' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['I'] += 0.5
-                if 'L' in dico_occ_cluster[cluster_name_1] : 
-                    dico_occ_cluster[cluster_name_1]['L'] += 0.5
+            if seq1[k] == 'Z' :                    
+                dico_occ_cluster[cluster_name_1]['I'] += 0.5
+                dico_occ_cluster[cluster_name_1]['L'] += 0.5
             
             if seq1[k] == 'X' :
-                
-                if 'D' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['D'] += 1/20
-                if 'E' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['E'] += 1/20
-                if 'A' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['A'] += 1/20
-                if 'R' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['R'] += 1/20
-                if 'N' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['N'] += 1/20
-                if 'C' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['C'] += 1/20
-                if 'Q' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['Q'] += 1/20
-                if 'G' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['G'] += 1/20
-                if 'H' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['H'] += 1/20
-                if 'I' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['I'] += 1/20
-                if 'L' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['L'] += 1/20
-                if 'K' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['K'] += 1/20
-                if 'M' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['M'] += 1/20
-                if 'F' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['F'] += 1/20
-                if 'P' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['P'] += 1/20
-                if 'S' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['S'] += 1/20
-                if 'T' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['T'] += 1/20
-                if 'W' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['W'] += 1/20
-                if 'Y' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['Y'] += 1/20
-                if 'V' in dico_occ_cluster[cluster_name_1 ]:
-                    dico_occ_cluster[cluster_name_1]['V'] += 1/20
+                dico_occ_cluster[cluster_name_1]['D'] += 1/20
+                dico_occ_cluster[cluster_name_1]['E'] += 1/20
+                dico_occ_cluster[cluster_name_1]['A'] += 1/20
+                dico_occ_cluster[cluster_name_1]['R'] += 1/20
+                dico_occ_cluster[cluster_name_1]['N'] += 1/20
+                dico_occ_cluster[cluster_name_1]['C'] += 1/20
+                dico_occ_cluster[cluster_name_1]['Q'] += 1/20
+                dico_occ_cluster[cluster_name_1]['G'] += 1/20
+                dico_occ_cluster[cluster_name_1]['H'] += 1/20
+                dico_occ_cluster[cluster_name_1]['I'] += 1/20
+                dico_occ_cluster[cluster_name_1]['L'] += 1/20
+                dico_occ_cluster[cluster_name_1]['K'] += 1/20
+                dico_occ_cluster[cluster_name_1]['M'] += 1/20
+                dico_occ_cluster[cluster_name_1]['F'] += 1/20
+                dico_occ_cluster[cluster_name_1]['P'] += 1/20
+                dico_occ_cluster[cluster_name_1]['S'] += 1/20
+                dico_occ_cluster[cluster_name_1]['T'] += 1/20
+                dico_occ_cluster[cluster_name_1]['W'] += 1/20
+                dico_occ_cluster[cluster_name_1]['Y'] += 1/20
+                dico_occ_cluster[cluster_name_1]['V'] += 1/20
             
             else :
                 if seq1[k] in dico_occ_cluster[cluster_name_1] : 
@@ -127,7 +137,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
 
     
     print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
-
+    
     dico_occ_final = {}
     #diviser occ par la taille du cluster 
     for cluster, dico_valeur in dico_occ_cluster.items():
@@ -144,9 +154,11 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
                 dico_occ_final[key] += dico_occ_cluster[cluster][key]
 
     #on récupère le nombre d'aa au total
+    print(dico_occ_final)
     tot =0
     for ele in dico_occ_final :
         tot+=dico_occ_final[ele]
+    print(tot)
 
     #calcule de la fréquence
     for AA in dico_occ_final:
@@ -220,4 +232,5 @@ file2 =  main_path + dossier + file_two
 #liSeqAli = readFastaMul(file1)
 liSeqAli = readFastaMul(file2)
 dico_occ_cluster = createDicoVide(liSeqAli)
+print(dico_occ_cluster)
 print(create_dico_frequence_acide_amine(liSeqAli, dico_occ_cluster))

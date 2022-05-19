@@ -154,11 +154,11 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
                 dico_occ_final[key] += dico_occ_cluster[cluster][key]
 
     #on récupère le nombre d'aa au total
-    print(dico_occ_final)
+    print("occurence dans le dico en tout", dico_occ_final, "\n")
     tot =0
     for ele in dico_occ_final :
         tot+=dico_occ_final[ele]
-    print(tot)
+    print("le total = ", tot, "\n")
 
     #calcule de la fréquence
     for AA in dico_occ_final:
@@ -224,7 +224,7 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 #tu a juste à changer le main_path
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
-file_one= "PF00006.28_Cluster60.fasta"
+file_one= "PF00008.30_Cluster60.fasta"
 file_two = "brs.fasta_Cluster60.fasta"
 file1 = main_path + dossier + file_one
 file2 =  main_path + dossier + file_two

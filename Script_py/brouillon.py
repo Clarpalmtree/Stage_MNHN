@@ -138,7 +138,46 @@ if __name__ == '__main__':
     Seq = readFastaMul("1brs.fasta")
     print(aafreq(Seq))
     
+###Brouillon_file MatPFASUM
+if seq1[k] == 'B' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['N'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['D'] = 0
 
+            if seq1[k] == 'J' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['Q'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['E'] = 0
+            
+            if seq1[k] == 'Z' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['I'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['L'] = 0
 
+            if seq1[k] == 'X' :
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ]['D'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['E'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['A'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['R'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['N'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['C'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['Q'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['G'] = 0 
+                    dico_occ_cluster[ cluster_name_1 ]['H'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['I'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['L'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['K'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['M'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['F'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['P'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['S'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['T'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['W'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['Y'] = 0
+                    dico_occ_cluster[ cluster_name_1 ]['V'] = 0
 
-
+            if seq1[k] in liste_aa : 
+                #si l'acide aminé n'existe pas dans le dico
+                if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
+                    dico_occ_cluster[ cluster_name_1 ][seq1[k]] = 0   

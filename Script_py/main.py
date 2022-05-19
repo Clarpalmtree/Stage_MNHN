@@ -12,6 +12,7 @@ name_folder_fasta = "Pfam_fasta"
 path_folder_cluster= path_main_folder + "/" + name_folder_cluster
 path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
+
 #print(ut.dataCountDescription(path_folder_cluster, liste_aa))
 
 #compte le nombre de file dans le mon dossier

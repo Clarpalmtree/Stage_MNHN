@@ -139,7 +139,33 @@ if __name__ == '__main__':
     print(aafreq(Seq))
     
 ###Brouillon_file MatPFASUM
-if seq1[k] == 'B' :
+def createDicoVide(liSeqAli):
+
+    dico_occ_cluster = {}
+    
+    #parcours des Séquences
+    for i in range(len(liSeqAli)):
+
+        #On extrait les infos
+        name1, seq1 = liSeqAli[i]
+        cluster_name_1 = int ( name1.split()[0] )
+        
+        #si le cluster existe pas dans le dico on le rajoute
+        if not cluster_name_1 in dico_occ_cluster.keys():
+            #avec son dico qui contiendra les occurences
+            dico_occ_cluster[ cluster_name_1 ] = {}
+
+        #parcours de acide aminées
+        for k in range(len(seq1)):
+
+            #j'ajoute +1 à l'acide amineé (ici je compte)
+
+            #si taille n'existe pas encore
+            if not "taille_cluster" in dico_occ_cluster[ cluster_name_1 ].keys():
+                taille_dico = int( name1.split()[1] )
+                dico_occ_cluster[ cluster_name_1 ]["taille_cluster"] = taille_dico 
+
+            if seq1[k] == 'B' :
                 if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
                     dico_occ_cluster[ cluster_name_1 ]['N'] = 0
                     dico_occ_cluster[ cluster_name_1 ]['D'] = 0
@@ -181,3 +207,5 @@ if seq1[k] == 'B' :
                 #si l'acide aminé n'existe pas dans le dico
                 if not seq1[k] in dico_occ_cluster[ cluster_name_1 ].keys():
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = 0   
+    
+    return dico_occ_cluster

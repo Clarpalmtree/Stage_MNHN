@@ -916,6 +916,7 @@ def CreateDicoFreqCouple( liSeqAli, dico_occ_cluster ):
         for key in dico_occ_cluster[cluster]:
             if not key == "taille_cluster":
                 for occu in dico_occ_cluster[cluster][key] :
+                    print(dico_occ_cluster[cluster][key][occu])
                      
                 
                     dico_occ_cluster[cluster][key] = dico_occ_cluster[cluster][key][occu] / dico_occ_cluster[cluster]["taille_cluster"]

@@ -100,7 +100,7 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = dico_occ_cluster[ cluster_name_1 ][seq1[k]] + 1
 
     
-    print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
+    #print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
     
     dico_occ_final = {}
     #diviser occ par la taille du cluster 
@@ -907,29 +907,31 @@ def CreateDicoFreqCouple( liSeqAli, dico_occ_cluster ):
                     dico_occ_cluster[ cluster_name_1 ][aa2][aa1] +=  1
 
     
-    print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
+    #print("dico avec occurence selon le cluster : ", dico_occ_cluster, "\n")
     
     dico_occ_final = {}
     #diviser occ par la taille du cluster 
-    for cluster, dico_valeur in dico_occ_cluster.items():
-
-        for key, occ in dico_valeur.items():
-        
+    for cluster in dico_occ_cluster :
+        print(cluster)
+        for key in dico_occ_cluster[cluster]:
             if not key == "taille_cluster":
-                dico_occ_cluster[cluster][key] = occ / dico_occ_cluster[cluster]["taille_cluster"]
+                for occu in dico_occ_cluster[cluster][key] :
+                     
+                
+                    dico_occ_cluster[cluster][key] = dico_occ_cluster[cluster][key][occu] / dico_occ_cluster[cluster]["taille_cluster"]
 
                 #si l'acie aminée existe pas dans le dico final
-                if not key in dico_occ_final.keys():
-                    dico_occ_final[key] = 0
+                    if not key in dico_occ_final.keys():
+                        dico_occ_final[key] = 0
 
-                dico_occ_final[key] += dico_occ_cluster[cluster][key]
+                    dico_occ_final[key] += dico_occ_cluster[cluster][key][occu]
 
     #on récupère le nombre d'aa au total
-    print("occurence dans le dico en tout", dico_occ_final, "\n")
+    #print("occurence dans le dico en tout", dico_occ_final, "\n")
     tot =0
     for ele in dico_occ_final :
         tot+=dico_occ_final[ele]
-    print("le total = ", tot, "\n")
+    #print("le total = ", tot, "\n")
 
     """
     #calcule de la fréquence

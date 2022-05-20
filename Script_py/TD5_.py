@@ -111,7 +111,7 @@ def pairsfreq(liSeqAli) :
                         d_aa_couple[aa2][aa1] += 1
                     tot += 2
 
-
+    print("total= ", tot, "\n")
     d_freq_couple = {}
     for aa1 in liste_aa:
         d_freq_couple[aa1] = {}
@@ -148,12 +148,13 @@ if __name__ == '__main__':
     #else:
     #    print("USAGE: %s <fasta file>"%sys.argv[0])
      #   sys.exit(1)
-    print(readFastaMul("brs.fasta"))
-    Seq = readFastaMul("brs.fasta")
-    print(freqAA(Seq))
+    #print(readFastaMul("/home/ctoussaint/Stage_MNHN/test/brs.fasta"))
+    Seq = readFastaMul("/home/ctoussaint/Stage_MNHN/test/brs.fasta")
+    #print(freqAA(Seq))
     dFreqAA= freqAA(Seq)
     dFreqPairs= pairsfreq(Seq)
-    print(computeMatrix(dFreqAA,dFreqPairs))
+    print(dFreqPairs)
+    #print(computeMatrix(dFreqAA,dFreqPairs))
     mat = computeMatrix(dFreqAA,dFreqPairs)
     #print(pairsfreq(Seq))
     #print(computeMatrix(freqAA, freqPairs))

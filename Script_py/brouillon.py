@@ -209,3 +209,275 @@ def createDicoVide(liSeqAli):
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = 0   
     
     return dico_occ_cluster
+
+##BROUILLON FILE MATPFSAUM.PY condition dico pair couple aa 
+#acide amine 1 X et aa 2 = Z
+"""
+dico_occ_cluster[cluster_name_1]['D']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['E']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['A']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['R']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['N']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['C']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['Q']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['G']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['H']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['I']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['L']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['K']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['M']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['F']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['P']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['S']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['T']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['W']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['Y']['I'] += 1/20
+dico_occ_cluster[cluster_name_1]['V']['I'] += 1/20
+
+dico_occ_cluster[cluster_name_1]['D']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['E']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['A']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['R']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['N']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['C']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['Q']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['G']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['H']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['I']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['L']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['K']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['M']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['F']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['P']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['S']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['T']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['W']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['Y']['L'] += 1/20
+dico_occ_cluster[cluster_name_1]['V']['L'] += 1/20
+"""
+
+#l'inverse 
+"""
+ dico_occ_cluster[cluster_name_1]['I']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['A'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['R'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['C'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['G'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['H'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['I'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['L'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['K'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['M'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['F'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['P'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['S'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['T'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['W'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['Y'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['V'] += 1/20
+
+                    dico_occ_cluster[cluster_name_1]['L']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['A'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['R'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['C'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['G'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['H'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['I'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['L'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['K'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['M'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['F'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['P'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['S'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['T'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['W'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['Y'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['V'] += 1/20
+"""
+#aa1 X and J aa2
+"""
+dico_occ_cluster[cluster_name_1]['D']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['A']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['R']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['N']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['C']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['G']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['H']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['K']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['M']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['F']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['P']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['S']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['T']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['W']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Y']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['V']['Q'] += 1/20
+
+                    dico_occ_cluster[cluster_name_1]['D']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['A']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['R']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['N']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['C']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['G']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['H']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['K']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['M']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['F']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['P']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['S']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['T']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['W']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Y']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['V']['E'] += 1/20
+
+
+"""
+
+#aa2 = J aa1 = X
+"""
+  dico_occ_cluster[cluster_name_1]['Q']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['A'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['R'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['C'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['G'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['H'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['I'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['L'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['K'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['M'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['F'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['P'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['S'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['T'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['W'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['Y'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['V'] += 1/20
+
+                    dico_occ_cluster[cluster_name_1]['E']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['E'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['A'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['R'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['C'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['Q'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['G'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['H'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['I'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['L'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['K'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['M'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['F'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['P'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['S'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['T'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['W'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['Y'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['V'] += 1/20
+"""
+
+#aa1 = B aa2 X
+"""
+dico_occ_cluster[cluster_name_1]['N']['D'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['E'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['A'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['R'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['N'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['C'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['Q'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['G'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['H'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['I'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['L'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['K'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['M'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['F'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['P'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['S'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['T'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['W'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['Y'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['N']['V'] += 0.5
+
+                    dico_occ_cluster[cluster_name_1]['D']['D'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['E'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['A'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['R'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['N'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['C'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['Q'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['G'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['H'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['I'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['L'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['K'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['M'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['F'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['P'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['S'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['T'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['W'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['Y'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['Y'] += 0.5
+                    dico_occ_cluster[cluster_name_1]['D']['V'] += 0.5
+"""
+#l'inverse
+"""
+dico_occ_cluster[cluster_name_1]['D']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['A']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['R']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['N']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['C']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['G']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['H']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['K']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['M']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['F']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['P']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['S']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['T']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['W']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Y']['N'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['V']['N'] += 1/20
+
+                    dico_occ_cluster[cluster_name_1]['D']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['E']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['A']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['R']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['N']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['C']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Q']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['G']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['H']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['I']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['L']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['K']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['M']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['F']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['P']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['S']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['T']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['W']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['Y']['D'] += 1/20
+                    dico_occ_cluster[cluster_name_1]['V']['D'] += 1/20
+"""

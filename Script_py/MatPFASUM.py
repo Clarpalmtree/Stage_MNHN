@@ -11,6 +11,11 @@ liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H',
 ### CALCUL DES FREQENCES DES PAIRS D'AA ...............................................................................
 #......................................................................................................................
 def createDicoVideAA(liSeqAli):
+    """
+    input : une liste de tuple (seq, nom)
+    output : un dico vide de la forme :
+                {<num_cluster> : {'taille_cluster' : <nb_seq_ds_cluster>, A : 0, T : 0, D : 0}}
+    """
 
     #Création d'un dico format {1: {taille_cluster : 2, A : 0, T : 0 , C : 0, D : 0}}
     dico_occ_cluster = {}
@@ -46,9 +51,8 @@ def createDicoVideAA(liSeqAli):
 
 def FreqAA( liSeqAli, dico_occ_cluster ):
     """
-        input : une liste de tuple (seq, nom)
-        output : un dico vide de la forme :
-                {<num_cluster> : {'taille_cluster' : <nb_seq_ds_cluster>, A : 0, T : 0, D : 0}}
+        input : une liste de tuple (seq, nom), un dico vide
+        output : un de la forme : { A : 0, T : 0, D : 0, ...}
     """
     
     #parcours des Séquences
@@ -107,7 +111,7 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
         tot+=dico_occ_final[ele]
    
 
-    #DÉCOMMENTER ICI POUR VOIR LE RESULTAT AVEC FREQ
+    #DÉCOMMENTER ICI POUR VOIR LE RESULTAT AVEC FREQ DANS CE FICHIER DANS LA PARTIE TEST TOUT EN BAS
     #calcule de la fréquence
     """
     for AA in dico_occ_final:
@@ -412,6 +416,8 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
             tot+=dico_aa_final[aa1][aa2]
     #print("le total = ", tot, "\n")
     
+    #CALCUL FREQ VOIR LA PARTIE TEST EN COMMENTAIRE TOUT EN BAS DU FICHIER :
+    #  A DECOMMENTER POUR TESTER DANS CE FICHIER
     """
     for aa1 in dico_aa_final :
         for aa2 in dico_aa_final[aa1] :

@@ -1,11 +1,14 @@
-from logging.config import listen
 import os
 from math import log2
 import pandas as pd
 from readFasta import readFastaMul
+from pathlib import Path
+
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H',
             'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
+
+
 
 
 ### CALCUL DES FREQENCES DES PAIRS D'AA ...............................................................................
@@ -49,7 +52,7 @@ def createDicoVideAA(liSeqAli):
 
 
 
-def FreqAA( liSeqAli, dico_occ_cluster ):
+def dicoFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
     """
         input : une liste de tuple (seq, nom), un dico vide
         output : un de la forme : { A : 0, T : 0, D : 0, ...}
@@ -87,7 +90,7 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = dico_occ_cluster[ cluster_name_1 ][seq1[k]] + 1
 
     
-    dico_occ_final = {}
+    
     #diviser occ par la taille du cluster 
     for cluster, dico_valeur in dico_occ_cluster.items():
 
@@ -105,14 +108,16 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
 
                 dico_occ_final[key] += dico_occ_cluster[cluster][key]
 
+   
     #on récupère le nombre d'aa au total
     tot =0
     for ele in dico_occ_final :
         tot+=dico_occ_final[ele]
    
-    
-    for AA in dico_occ_final:
-        dico_occ_final[AA] = dico_occ_final[AA]/tot
+   #DECOMMENTER ICI POUR FAIRE DE PETIT ET VERIFIER LES FRÉQUENCES
+
+#    for AA in dico_occ_final:
+#       dico_occ_final[AA] = dico_occ_final[AA]/tot
     
 
     #vérfication
@@ -125,6 +130,20 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
 
     return dico_occ_final, tot
 
+##Multiple pour toutes les données dans le dossier
+def freqAA ( directory) :
+
+    dFreqAA={}
+
+    for files in directory :
+        seq = seq= readFastaMul(files)
+        doccAA = createDicoVideAA(seq)
+        dFreqAA, tot = dicoFreqAA(seq, doccAA, dFreqAA)
+
+    for AA in dFreqAA:
+        dFreqAA[AA] = dFreqAA[AA]/tot
+
+    return dFreqAA
 
 
 ### CALCUL DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.....................................................................
@@ -170,7 +189,7 @@ def createDicoVideCoupleAA(liSeqAli):
             
             
 
-def FreqPairAA( liSeqAli, dico_occ_cluster ):
+def FreqPairAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
     """
         input : une liste de tuple (nom, seq) et un dico vide
         output : un dico de la fréquence des pairs de couple d' aa de la forme : 
@@ -382,7 +401,6 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
     #Additionner les AA ICI
     #========================
 
-    dico_aa_final = {}
 
     #boucle cluster
     for cluster in dico_occ_cluster :
@@ -407,21 +425,34 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
 
 
     #print("DICO FINAL : ", dico_aa_final )
-    tot =0
+    tot = 0
     for aa1 in dico_aa_final :
         for aa2 in dico_aa_final[aa2] : 
             tot+=dico_aa_final[aa1][aa2]
     #print("le total = ", tot, "\n")
     
-    
+    ##DECOMMENTER ICI POUR FAIRE DE PETIT TEST
+    """
     for aa1 in dico_aa_final :
         for aa2 in dico_aa_final[aa1] :
             dico_aa_final[aa1][aa2] = dico_aa_final[aa1][aa2] / tot
-    
+    """
 
-    return dico_aa_final
+    return dico_aa_final, tot
 
+def FreqPairCoupleAA ( directory) :
 
+    dFreqPairCoupleAA={}
+
+    for files in directory :
+        seq =  readFastaMul(files)
+        doccAA = createDicoVideCoupleAA(seq)
+        dFreqPairCoupleAA, tot = dicoFreqAA(seq, doccAA, dFreqPairCoupleAA)
+
+    for AA in dFreqPairCoupleAA:
+        dFreqPairCoupleAA[AA] = dFreqPairCoupleAA[AA]/tot
+
+    return dFreqPairCoupleAA
 
 def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
     """ input : 1 dico des fréquences des acides aminés + 1 dico des fréquences des pairs d'aa
@@ -449,6 +480,8 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 """
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
+cluster60 = "/fichiers_cluster60"
+path_clust60 = main_path + cluster60
 
 #dans le fichier test vous pouvez trouvez des fichiers cluster60 à tester
 file_one= "PF00002.27_Cluster60.fasta"
@@ -473,4 +506,9 @@ print("\n")
 dfreqPair = FreqPairAA(liSeqAli,dico_occ_cluster_couple )
 print(dfreqPair)
 print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
+
+##TEST SUR TOUS LES FICHIERS
+dicoFreqAA = FreqPairAA(path_clust60)
+dicoFreqCoupleAA = FreqPairCoupleAA(path_clust60)
+print(computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, 1))
 """

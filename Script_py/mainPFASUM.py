@@ -25,7 +25,7 @@ files_directory_fasta = path_folder_fasta.iterdir()
 
 #création des dicos pour compter les occurences.................................
 
-
+"""
 ##dico occurence aa.....................
 d_occ_AA={}
 for aa in liste_aa:
@@ -38,7 +38,7 @@ for aa1 in liste_aa:
     d_freq_pair[aa1] = {}
     for aa2 in liste_aa:
             d_freq_pair[aa1][aa2] = 0
-
+"""
 
 #comptage des différentes occurences dans tous les fichiers Fasta...............
 #Petit doute sur cette boucle

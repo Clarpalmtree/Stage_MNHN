@@ -7,7 +7,7 @@ from pathlib import Path
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
-path_folder_fasta = "/home/ctoussaint/Clara/Pfam_fasta"
+path_folder_fasta = "/home/ctoussaint/Pfam_fasta"
 scaling_factor = 1
 
 #pour pouvoir itérer dans le dossier contenant les fichiers fasta

@@ -115,11 +115,12 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
     """
 
     #vérfication
+    """
     somme=0
     for AA in dico_occ_final:
         somme+=dico_occ_final[AA]
     #print("somme des fréquences = ", somme, "\n")
-    
+    """
 
     return dico_occ_final, tot
 

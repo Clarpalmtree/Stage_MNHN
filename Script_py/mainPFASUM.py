@@ -1,9 +1,9 @@
 ##main_PFASUM...................................................................
 
 import readFasta as RF
-import matrice_PFASUM as MP
+import MatPFASUM as MP
 import os
-#from pathlib import Path
+from pathlib import Path
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
@@ -39,11 +39,14 @@ for aa1 in liste_aa:
             d_occ_pair[aa1][aa2] = 0
 
 #comptage des différentes occurences dans tous les fichiers Fasta...............
-
+#Petit doute sur cette boucle
 for files in files_directory_fasta :
     seq= RF.readFastaMul(files)
-    d_occ_AA, tot_AA= MP.occurence_AA(seq, d_occ_AA)
-    d_occ_pair, tot_pairs = MP.occurence_couple(seq, d_occ_pair)
+    doccAA = MP.createDicoVideAA(seq)
+    doccCouple = MP.createDicoVideCoupleAA(seq)
+    d_occ_AA, tot_AA = MP.FreqPairAA(seq, doccAA)
+    d_occ_pair, tot_pairs = MP.FreqAA(seq, doccCouple)
+
 
 #calcule des fréquences.........................................................
 
@@ -62,3 +65,4 @@ for aa1 in liste_aa:
 #Création de la matrice PFASUM..................................................
 
 MatPfasum = MP.computeMatrixPFASUM(d_occ_AA, d_freq_pair, scaling_factor)
+

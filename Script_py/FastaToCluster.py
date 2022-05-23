@@ -24,7 +24,6 @@ def distance_iD( id_seq1, id_seq2 ):
         print("IndexError liSeqAli[", int ( id_seq1[0] ), "][1] liSeqAli[",
                 int ( id_seq2[0] ), "][1] , len : " , len( liSeqAli ) )
 
-    #print( "Résultat de perID : ", test )
 
     return 1 - ID
 
@@ -33,6 +32,7 @@ def Clustering( matrice_id, dist):
         input : une matrice contenant les identifiants des séquences
         output : une liste de numéro de cluster
     """
+
     cluster = []
     clustering = DBSCAN(eps=dist, min_samples=2, metric=distance_iD).fit(matrice_id)
     #print("CLUSTERING : ")
@@ -57,13 +57,13 @@ if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
     path_main_folder =  "/home/ctoussaint"
-    name_folder_cluster= "fichiers_cluster"
+    name_folder_cluster= "fichiers_Cluster"
     name_folder_fasta = "Pfam_fasta"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
     #% d'identité
-    perID = 0.60
+    perID = 0.31
 
     #On multiplie par 100 pour écrire dans le nom des fichiers et dossier
     #et on convertit en string
@@ -80,11 +80,11 @@ if __name__ == '__main__':
     path_fasta = Path(path_folder_fasta + '/')
     path_fasta = path_fasta.iterdir()
 
-
+    t = Timer()
+    t.start()
     #Création des fichiers cluster à partir du nom des fichiers fasta utilisé
     for file_name_fasta in path_fasta :
-        t = Timer()
-        t.start()
+        
         accession_num = file_name_fasta.name.split(".")[0] + '.' + file_name_fasta.name.split(".")[1]
         file_name_cluster = accession_num + "_Cluster" + dist + ".fasta"
 
@@ -120,4 +120,4 @@ if __name__ == '__main__':
 
             file_name_cluster.write(result_text)
 
-        t.stop("Time to convert 2 fasta files")
+    t.stop("Time to cluster")

@@ -10,7 +10,7 @@ liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H',
 
 ### CALCUL DES FREQENCES DES PAIRS D'AA ...............................................................................
 #......................................................................................................................
-def createDicoVide(liSeqAli):
+def createDicoVideAA(liSeqAli):
 
     #Création d'un dico format {1: {taille_cluster : 2, A : 0, T : 0 , C : 0, D : 0}}
     dico_occ_cluster = {}
@@ -44,7 +44,7 @@ def createDicoVide(liSeqAli):
 
 
 
-def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
+def FreqAA( liSeqAli, dico_occ_cluster ):
     """
         input : une liste de tuple (seq, nom)
         output : un dico vide de la forme :
@@ -89,11 +89,11 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
 
         for key, occ in dico_valeur.items():
             
-            print("occ", occ)
+            #print("occ", occ)
             if not key == "taille_cluster":
-                print(dico_occ_cluster)
+                #print(dico_occ_cluster)
                 dico_occ_cluster[cluster][key] = occ / dico_occ_cluster[cluster]["taille_cluster"]
-                print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key])
+                #print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key])
 
                 #si l'acie aminée existe pas dans le dico final
                 if not key in dico_occ_final.keys():
@@ -108,9 +108,11 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
    
 
     #calcule de la fréquence
+    """
     for AA in dico_occ_final:
         dico_occ_final[AA] = dico_occ_final[AA]/tot
-    
+    """
+
     #vérfication
     somme=0
     for AA in dico_occ_final:
@@ -118,16 +120,18 @@ def create_dico_frequence_acide_amine( liSeqAli, dico_occ_cluster ):
     #print("somme des fréquences = ", somme, "\n")
     
 
-    return dico_occ_final
-
-
-
+    return dico_occ_final, tot
 
 
 
 ### CALCUL DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.....................................................................
 #......................................................................................................................
 def createDicoVideCoupleAA(liSeqAli):
+    """
+        input : une liste de tuple ( nom / seq)
+        output : un dico vide de la forme :
+                {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
+    """
 
     dico_occ_cluster_couple = {}
     
@@ -165,9 +169,9 @@ def createDicoVideCoupleAA(liSeqAli):
 
 def FreqPairAA( liSeqAli, dico_occ_cluster ):
     """
-        input : une liste de tuple (nom, seq)
-        output : un dico vide de la forme : 
-                {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
+        input : une liste de tuple (nom, seq) et un dico vide
+        output : un dico de la fréquence des pairs de couple d' aa de la forme : 
+                { 'A' : {A: 0, T : 0, D : 0}, 'T' : {A : 0, T : 0, D : 0}, 'D' : {A : 0, T : 0, D : 0}, ...}
     """
     
     for i in range(len(liSeqAli)):
@@ -179,10 +183,11 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
     
             if cluster_name_2 == cluster_name_1 : 
                 for (aa1, aa2) in zip(seq1, seq2):
-                    print("cluster :", cluster_name_1,  "aa1 : ", aa1, "aa2 :", aa2)
+                    #print("cluster :", cluster_name_1,  "aa1 : ", aa1, "aa2 :", aa2)
                     
                 
                     #condition Pour les AA ambigu
+                    #au niveau de chiffres je ne suis pas sûr
 
                     # [B,Z]
                     if aa1 == 'B' and aa2 == 'Z' :
@@ -229,38 +234,38 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
                     # [J,X]
                     if aa1 == 'J' and aa2 == 'X':
                         for aa in liste_aa : 
-                            dico_occ_cluster[cluster_name_1]['E'][aa] += 0.5
-                            dico_occ_cluster[cluster_name_1]['Q'][aa] += 0.5
+                            dico_occ_cluster[cluster_name_1]['E'][aa] += 11/40
+                            dico_occ_cluster[cluster_name_1]['Q'][aa] += 11/40
                         
                     # [X,J]
                     if aa1 =='X' and aa2 == 'J':
                         for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa]['Q'] += 1/20
-                            dico_occ_cluster[cluster_name_1][aa]['E'] += 1/20
+                            dico_occ_cluster[cluster_name_1][aa]['Q'] += 11/40
+                            dico_occ_cluster[cluster_name_1][aa]['E'] += 11/40
 
                     # [Z,X]
                     if aa1 == 'Z' and aa2 == 'X': 
                         for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['I'][aa] += 1/20
-                            dico_occ_cluster[cluster_name_1]['L'][aa] += 1/20
+                            dico_occ_cluster[cluster_name_1]['I'][aa] += 11/40
+                            dico_occ_cluster[cluster_name_1]['L'][aa] += 11/40
 
                     # [X,Z]
                     if aa2 == 'Z' and aa1 == 'X': 
                         for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa]['I'] += 1/20
-                            dico_occ_cluster[cluster_name_1][aa]['L'] += 1/20
+                            dico_occ_cluster[cluster_name_1][aa]['I'] += 11/40
+                            dico_occ_cluster[cluster_name_1][aa]['L'] += 11/40
 
                     # [B,X]
                     if aa1 == 'B' and aa2 == 'X' : 
                         for aa in liste_aa : 
-                                dico_occ_cluster[cluster_name_1]['N'][aa] += 0.5
-                                dico_occ_cluster[cluster_name_1]['D'][aa] += 0.5
+                                dico_occ_cluster[cluster_name_1]['N'][aa] += 11/40
+                                dico_occ_cluster[cluster_name_1]['D'][aa] += 11/40
 
                     # [X,B]
                     if aa1 == 'X' and aa2 == 'B':
                         for aa in liste_aa : 
-                                dico_occ_cluster[cluster_name_1][aa]['N'] += 0.5
-                                dico_occ_cluster[cluster_name_1][aa]['D'] += 0.5
+                                dico_occ_cluster[cluster_name_1][aa]['N'] += 11/40
+                                dico_occ_cluster[cluster_name_1][aa]['D'] += 11/40
 
                     # [B,B]
                     if aa1 == 'B' and aa2 =='B' :
@@ -287,57 +292,57 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
                     if aa1 =='X' and aa2 == 'X' :
                         for acid_a1 in liste_aa :
                             for acid_a2 in liste_aa : 
-                                dico_occ_cluster[cluster_name_1][acid_a1][acid_a2] +=1/20 
-                                dico_occ_cluster[cluster_name_1][acid_a2][acid_a1] +=1/20
+                                dico_occ_cluster[cluster_name_1][acid_a1][acid_a2] +=1/80 
+                                dico_occ_cluster[cluster_name_1][acid_a2][acid_a1] +=1/80
 
                 
                     # [aa,B]
                     if aa2 == 'B' :
                         if aa1 in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa1]['D'] += 0.5
-                            dico_occ_cluster[cluster_name_1][aa1]['N'] += 0.5
+                            dico_occ_cluster[cluster_name_1][aa1]['D'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['N'] += 3/4
                     
                     # [B,aa]
                     if aa1 == 'B' :
                         if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['D'][aa2] += 0.5
-                            dico_occ_cluster[cluster_name_1]['N'][aa2] += 0.5
+                            dico_occ_cluster[cluster_name_1]['D'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['N'][aa2] += 3/4
 
                     # [J,aa]
                     if aa1 == 'J' :
                         if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['E'][aa2] += 0.5
-                            dico_occ_cluster[cluster_name_1]['Q'][aa2] += 0.5
+                            dico_occ_cluster[cluster_name_1]['E'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['Q'][aa2] += 3/4
 
                     # [aa,J]
                     if aa2 == 'J' :
                         if aa1 in liste_aa : 
-                            dico_occ_cluster[cluster_name_1][aa1]['E'] += 0.5
-                            dico_occ_cluster[cluster_name_1][aa1]['Q'] += 0.5
+                            dico_occ_cluster[cluster_name_1][aa1]['E'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['Q'] += 3/4
 
                     # [Z,aa]
                     if aa1 == 'Z' :
                         if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['I'][aa2] += 0.5
-                            dico_occ_cluster[cluster_name_1]['L'][aa2] += 0.5
+                            dico_occ_cluster[cluster_name_1]['I'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['L'][aa2] += 3/4
 
                     # [aa,Z]
                     if (aa2 == 'Z') :
                         if aa1 in liste_aa : 
-                            dico_occ_cluster[cluster_name_1][aa1]['I'] += 0.5
-                            dico_occ_cluster[cluster_name_1][aa1]['L'] += 0.5
+                            dico_occ_cluster[cluster_name_1][aa1]['I'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['L'] += 3/4
 
                     # [X,aa]
                     if aa1 == 'X' :
                         if aa2 in liste_aa :
                             for aa in liste_aa :
-                                dico_occ_cluster[cluster_name_1][aa][aa2] += 1/20
+                                dico_occ_cluster[cluster_name_1][aa][aa2] += 21/40
 
                     # [aa,X]
                     if aa2 == 'X':
                         if aa1 in liste_aa : 
                             for aa in liste_aa :
-                                dico_occ_cluster[cluster_name_1][aa1][aa] += 1/20
+                                dico_occ_cluster[cluster_name_1][aa1][aa] += 21/40
 
                     # les 20 aa non ambigu
                     if aa1 in liste_aa and aa2 in liste_aa : 
@@ -348,15 +353,13 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
                             dico_occ_cluster[ cluster_name_1 ][aa1][aa2] +=  1
                             dico_occ_cluster[ cluster_name_1 ][aa2][aa1] +=  1
 
-                #print(dico_occ_cluster)
     
 
 
     #ON VA DIVISER LES OCCU DES AA PAR LA TAILLE
     #===========================================
-
+    #aspect du dico jusqu'ici : {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
     #boucle cluster
-    #print(dico_occ_cluster)
     for cluster in dico_occ_cluster :
         
         #boucle acide aminé 
@@ -374,7 +377,6 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
 
         
     #Additionner les AA ICI
-    #Touche pas stp
     #========================
 
     dico_aa_final = {}
@@ -393,7 +395,6 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
                 if not aa in dico_aa_final.keys() :
                     dico_aa_final[aa] = {}
 
-                test = dico_occ_cluster[cluster][aa]
 
                 for key in dico_occ_cluster[cluster][aa] :
                     if not key in dico_aa_final[aa].keys() :
@@ -409,13 +410,13 @@ def FreqPairAA( liSeqAli, dico_occ_cluster ):
             tot+=dico_aa_final[aa1][aa2]
     #print("le total = ", tot, "\n")
     
-    
+    """
     for aa1 in dico_aa_final :
         for aa2 in dico_aa_final[aa1] :
             dico_aa_final[aa1][aa2] = dico_aa_final[aa1][aa2] / tot
+    """
 
-
-    return dico_aa_final
+    return dico_aa_final, tot
 
 
 
@@ -441,7 +442,8 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 
 ###TEST CALCULE FREQUENCE  PAIR AA ...........................................................
 #.............................................................................................
-#tu a juste à changer le main_path
+#il faut juste changer le main_path normalement pour tester ici les fonctions
+"""
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 
@@ -453,14 +455,19 @@ file_two = "brs.fasta_Cluster60.fasta"
 file1 = main_path + dossier + file_one
 file2 =  main_path + dossier + file_two
 
+
 #liSeqAli = readFastaMul(file1)
 liSeqAli = readFastaMul(file2)
 dico_occ_cluster_couple = createDicoVideCoupleAA(liSeqAli)
 #print(dico_occ_cluster_couple)
-dico_occ_cluster = createDicoVide(liSeqAli)
+dico_occ_cluster = createDicoVideAA(liSeqAli)
 #print("Dico vide :")
 #print(dico_occ_cluster, "\n")
-dFreqAA = (create_dico_frequence_acide_amine(liSeqAli, dico_occ_cluster))
+
+##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec """"""
+dFreqAA = (FreqAA(liSeqAli, dico_occ_cluster))
 print("\n")
 dfreqPair = FreqPairAA(liSeqAli,dico_occ_cluster_couple )
+print(dfreqPair)
 print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
+"""

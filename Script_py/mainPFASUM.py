@@ -7,7 +7,7 @@ from pathlib import Path
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
-path_folder_fasta = "/home/ctoussaint/Pfam_fasta"
+path_folder_fasta = "/home/ctoussaint/fichiers_cluster60"
 scaling_factor = 1
 
 #Pour pouvoir itérer dans le dossier contenant les fichiers fasta
@@ -40,17 +40,24 @@ for aa1 in liste_aa:
             d_freq_pair[aa1][aa2] = 0
 """
 
+##TEST VOIR MATPFASUM.py 
+
+#en commentaire c'est une sorte de brouillon
+
 #comptage des différentes occurences dans tous les fichiers Fasta...............
 #Petit doute sur cette boucle
 for files in files_directory_fasta :
     seq= RF.readFastaMul(files)
     doccAA = MP.createDicoVideAA(seq)
     doccCouple = MP.createDicoVideCoupleAA(seq)
-    d_occ_AA = MP.FreqPairAA(seq, doccAA)
-    d_freq_pair = MP.FreqAA(seq, doccCouple)
+    d_occ_AA, tot = MP.DFreqAA(seq, doccAA)
+    d_freq_pair, tot = MP.dicoFreqCoupleAA(seq, doccCouple)
 
 
+dicoFreqAA = MP.freqAA(path_folder_fasta)
+dicoFreqCoupleAA = MP.dicoFreqCoupleAA(path_folder_fasta)
 
 #Création de la matrice PFASUM..................................................
 
-MatPfasum = MP.computeMatrixPFASUM(d_occ_AA, d_freq_pair, scaling_factor)
+MatPfasum = MP.computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, scaling_factor)
+print(MatPfasum)

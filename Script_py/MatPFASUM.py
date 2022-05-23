@@ -138,7 +138,7 @@ def freqAA ( directory) :
     for files in directory :
         seq = readFastaMul(files)
         doccAA = createDicoVideAA(seq)
-        dFreqAA, tot = dicoFreqAA(seq, doccAA, dFreqAA)
+        dFreqAA, tot = DFreqAA(seq, doccAA, dFreqAA)
 
     for AA in dFreqAA:
         dFreqAA[AA] = dFreqAA[AA]/tot
@@ -189,7 +189,7 @@ def createDicoVideCoupleAA(liSeqAli):
             
             
 
-def FreqPairAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
+def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
     """
         input : une liste de tuple (nom, seq) et un dico vide
         output : un dico de la fréquence des pairs de couple d' aa de la forme : 
@@ -440,14 +440,14 @@ def FreqPairAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
 
     return dico_aa_final, tot
 
-def FreqPairCoupleAA ( directory) :
+def FreqCoupleAA ( directory) :
 
     dFreqPairCoupleAA={}
 
     for files in directory :
         seq =  readFastaMul(files)
         doccAA = createDicoVideCoupleAA(seq)
-        dFreqPairCoupleAA, tot = dicoFreqAA(seq, doccAA, dFreqPairCoupleAA)
+        dFreqPairCoupleAA, tot = dicoFreqCoupleAA(seq, doccAA, dFreqPairCoupleAA)
 
     for AA in dFreqPairCoupleAA:
         dFreqPairCoupleAA[AA] = dFreqPairCoupleAA[AA]/tot
@@ -477,7 +477,7 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 ###TEST CALCULE FREQUENCE  PAIR AA ...........................................................
 #.............................................................................................
 #il faut juste changer le main_path normalement pour tester ici les fonctions
-"""
+
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 cluster60 = "/fichiers_cluster60"
@@ -503,12 +503,11 @@ dico_occ_cluster = createDicoVideAA(liSeqAli)
 ##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec 
 dFreqAA = (DFreqAA(liSeqAli, dico_occ_cluster))
 print("\n")
-dfreqPair = FreqPairAA(liSeqAli,dico_occ_cluster_couple )
+dfreqPair = dicoFreqCoupleAA(liSeqAli,dico_occ_cluster_couple )
 print(dfreqPair)
 print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
 
 ##TEST SUR TOUS LES FICHIERS
 dicoFreqAA = freqAA(path_clust60)
-dicoFreqCoupleAA = FreqPairCoupleAA(path_clust60)
+dicoFreqCoupleAA = FreqCoupleAA(path_clust60)
 print(computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, 1))
-"""

@@ -52,7 +52,7 @@ def createDicoVideAA(liSeqAli):
 
 
 
-def dicoFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
+def DFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
     """
         input : une liste de tuple (seq, nom), un dico vide
         output : un de la forme : { A : 0, T : 0, D : 0, ...}
@@ -500,15 +500,15 @@ dico_occ_cluster = createDicoVideAA(liSeqAli)
 #print("Dico vide :")
 #print(dico_occ_cluster, "\n")
 
-##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec """"""
-dFreqAA = (FreqAA(liSeqAli, dico_occ_cluster))
+##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec 
+dFreqAA = (DFreqAA(liSeqAli, dico_occ_cluster))
 print("\n")
 dfreqPair = FreqPairAA(liSeqAli,dico_occ_cluster_couple )
 print(dfreqPair)
 print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
 
 ##TEST SUR TOUS LES FICHIERS
-dicoFreqAA = FreqPairAA(path_clust60)
+dicoFreqAA = freqAA(path_clust60)
 dicoFreqCoupleAA = FreqPairCoupleAA(path_clust60)
 print(computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, 1))
 """

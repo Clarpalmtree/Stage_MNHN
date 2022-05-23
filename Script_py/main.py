@@ -7,7 +7,7 @@ liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H',
             'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
 path_main_folder =  "/home/ctoussaint"
-name_folder_cluster= "fichiers_cluster60"
+name_folder_cluster= "fichiers_Cluster43"
 name_folder_fasta = "Pfam_fasta"
 path_folder_cluster= path_main_folder + "/" + name_folder_cluster
 path_folder_fasta = path_main_folder + "/" + name_folder_fasta
@@ -32,7 +32,7 @@ for file in path_folder_fasta :
 
 tot_file = count_fasta - count
 print("Nb de fichier dans le dossier Pfam_fasta: ", count_fasta,
-        "\nNb de fichier dans le dossier cluster60 : ", count,
+        "\nNb de fichier dans le dossier cluster43 : ", count,
         "\nNb fichier restant à clusteriser: ", tot_file)
 
 

@@ -9,6 +9,9 @@ import Similarite as SIM
 from timer import Timer
 
 
+
+### Fonction de distance pour le clustering .............................................
+#........................................................................................
 def distance_iD( id_seq1, id_seq2 ):
     """
         input : deux id issu de deux séquences d'un alignment multiple
@@ -27,6 +30,8 @@ def distance_iD( id_seq1, id_seq2 ):
 
     return 1 - ID
 
+### Fonction clustering .................................................................
+#........................................................................................
 def Clustering( matrice_id, dist):
     """
         input : une matrice contenant les identifiants des séquences
@@ -63,7 +68,7 @@ if __name__ == '__main__':
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
     #% d'identité
-    perID = 0.31
+    perID = 0.43
 
     #On multiplie par 100 pour écrire dans le nom des fichiers et dossier
     #et on convertit en string

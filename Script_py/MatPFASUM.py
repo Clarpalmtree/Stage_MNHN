@@ -110,9 +110,6 @@ def FreqAA( liSeqAli, dico_occ_cluster ):
     for ele in dico_occ_final :
         tot+=dico_occ_final[ele]
    
-
-    #DÉCOMMENTER ICI POUR VOIR LE RESULTAT AVEC FREQ DANS CE FICHIER DANS LA PARTIE TEST TOUT EN BAS
-    #calcule de la fréquence
     
     for AA in dico_occ_final:
         dico_occ_final[AA] = dico_occ_final[AA]/tot

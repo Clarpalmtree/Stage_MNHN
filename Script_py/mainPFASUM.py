@@ -10,7 +10,7 @@ liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F'
 path_folder_fasta = "/home/ctoussaint/Pfam_fasta"
 scaling_factor = 1
 
-#pour pouvoir itérer dans le dossier contenant les fichiers fasta
+#Pour pouvoir itérer dans le dossier contenant les fichiers fasta
 files_directory_fasta = []
 for filename in os.listdir(path_folder_fasta):
     f = os.path.join(path_folder_fasta, filename) #permet de concatener le nom du chemin avec le fichier
@@ -54,4 +54,3 @@ for files in files_directory_fasta :
 #Création de la matrice PFASUM..................................................
 
 MatPfasum = MP.computeMatrixPFASUM(d_occ_AA, d_freq_pair, scaling_factor)
-

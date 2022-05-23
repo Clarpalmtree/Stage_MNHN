@@ -25,6 +25,7 @@ files_directory_fasta = path_folder_fasta.iterdir()
 
 #création des dicos pour compter les occurences.................................
 
+"""
 ##dico occurence aa.....................
 d_occ_AA={}
 for aa in liste_aa:
@@ -37,6 +38,7 @@ for aa1 in liste_aa:
     d_occ_pair[aa1] = {}
     for aa2 in liste_aa:
             d_occ_pair[aa1][aa2] = 0
+"""
 
 #comptage des différentes occurences dans tous les fichiers Fasta...............
 #Petit doute sur cette boucle
@@ -44,23 +46,10 @@ for files in files_directory_fasta :
     seq= RF.readFastaMul(files)
     doccAA = MP.createDicoVideAA(seq)
     doccCouple = MP.createDicoVideCoupleAA(seq)
-    d_occ_AA, tot_AA = MP.FreqPairAA(seq, doccAA)
-    d_occ_pair, tot_pairs = MP.FreqAA(seq, doccCouple)
+    d_occ_AA = MP.FreqPairAA(seq, doccAA)
+    d_freq_pair = MP.FreqAA(seq, doccCouple)
 
 
-#calcule des fréquences.........................................................
-
-for AA in d_occ_AA:
-    d_occ_AA[AA]=d_occ_AA[AA]/tot_AA
-
-d_freq_pair = {}
-for aa1 in liste_aa:
-    d_freq_pair[aa1] = {}
-    for aa2 in liste_aa:
-        if tot_pairs != 0:
-            d_freq_pair[aa1][aa2] = d_occ_pair[aa1][aa2]/tot_pairs
-        else:
-            d_freq_pair[aa1][aa2] = 0
 
 #Création de la matrice PFASUM..................................................
 

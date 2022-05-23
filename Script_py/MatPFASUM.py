@@ -136,7 +136,7 @@ def freqAA ( directory) :
     dFreqAA={}
 
     for files in directory :
-        seq = seq= readFastaMul(files)
+        seq = readFastaMul(files)
         doccAA = createDicoVideAA(seq)
         dFreqAA, tot = dicoFreqAA(seq, doccAA, dFreqAA)
 

@@ -5,8 +5,11 @@ from readFasta import readFastaMul
 from pathlib import Path
 
 
-liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H',
-            'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
+liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
+            'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
+
+liste_aa_ambigu = ['X', 'Z', 'J', 'B', 'A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G',
+                   'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
 
 
@@ -45,14 +48,14 @@ def createDicoVideAA(liSeqAli):
                 taille_dico = int( name1.split()[1] )
                 dico_occ_cluster[ cluster_name_1 ]["taille_cluster"] = taille_dico    
             
-            for aa in liste_aa :
+            for aa in liste_aa_ambigu :
                 dico_occ_cluster[ cluster_name_1 ][aa] = 0
            
     return dico_occ_cluster
 
 
 
-def DFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
+def DFreqAA( liSeqAli, dico_occ_cluster ):
     """
         input : une liste de tuple (seq, nom), un dico vide
         output : un de la forme : { A : 0, T : 0, D : 0, ...}
@@ -66,39 +69,37 @@ def DFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
         cluster_name_1 = int ( name1.split()[0] )
         for k in range (len(seq1)):
             
-
-            #condition si on rencontre un aa ambigu
-            if seq1[k] == 'B' :
-                dico_occ_cluster[cluster_name_1]['D'] += 0.5
-                dico_occ_cluster[cluster_name_1]['N'] += 0.5
-
-            
-            if seq1[k] == 'J' :
-                dico_occ_cluster[cluster_name_1]['E'] += 0.5
-                dico_occ_cluster[cluster_name_1]['Q'] += 0.5
-            
-            if seq1[k] == 'Z' :                    
-                dico_occ_cluster[cluster_name_1]['I'] += 0.5
-                dico_occ_cluster[cluster_name_1]['L'] += 0.5
-            
-            if seq1[k] == 'X' :
-                for aa in liste_aa : 
-                    dico_occ_cluster[cluster_name_1][aa] += 1/20
-         
-            else :
-                if seq1[k] in dico_occ_cluster[cluster_name_1] : 
+            if seq1[k] in dico_occ_cluster[cluster_name_1] : 
                     dico_occ_cluster[ cluster_name_1 ][seq1[k]] = dico_occ_cluster[ cluster_name_1 ][seq1[k]] + 1
 
-    
-    
+    dico_occ_final={}
     #diviser occ par la taille du cluster 
     for cluster, dico_valeur in dico_occ_cluster.items():
 
         for key, occ in dico_valeur.items():
             
             #print("occ", occ)
-            if not key == "taille_cluster":
+            if key == 'Z' :
+                dico_occ_cluster[cluster]['I'] += occ/2
+                dico_occ_cluster[cluster]['L'] += occ/2
+            
+            if key == 'J' :
+                dico_occ_cluster[cluster]['E'] += occ/2
+                dico_occ_cluster[cluster]['Q'] += occ/2
+
+            if key == 'B' :
+                dico_occ_cluster[cluster]['N'] += occ/2
+                dico_occ_cluster[cluster]['D'] += occ/2
+            
+            if key == 'X' :
+                for aa in liste_aa :
+                    dico_occ_cluster[cluster][aa] += occ/20
+
+    
+            if not key == "taille_cluster" or key in liste_aa:
+               
                 #print(dico_occ_cluster)
+
                 dico_occ_cluster[cluster][key] = occ / dico_occ_cluster[cluster]["taille_cluster"]
                 #print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key])
 
@@ -108,7 +109,8 @@ def DFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
 
                 dico_occ_final[key] += dico_occ_cluster[cluster][key]
 
-   
+    [dico_occ_final.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
+    
     #on récupère le nombre d'aa au total
     tot =0
     for ele in dico_occ_final :
@@ -116,17 +118,17 @@ def DFreqAA( liSeqAli, dico_occ_cluster , dico_occ_final):
    
    #DECOMMENTER ICI POUR FAIRE DE PETIT ET VERIFIER LES FRÉQUENCES
 
-#    for AA in dico_occ_final:
-#       dico_occ_final[AA] = dico_occ_final[AA]/tot
+    for AA in dico_occ_final:
+       dico_occ_final[AA] = dico_occ_final[AA]/tot
     
 
     #vérfication
-    """
+    
     somme=0
     for AA in dico_occ_final:
         somme+=dico_occ_final[AA]
-    #print("somme des fréquences = ", somme, "\n")
-    """
+    print("somme des fréquences = ", somme, "\n")
+    
 
     return dico_occ_final, tot
 
@@ -179,9 +181,9 @@ def createDicoVideCoupleAA(liSeqAli):
                 taille_dico = int( name1.split()[1] )
                 dico_occ_cluster_couple[ cluster_name_1 ]["taille_cluster"] = taille_dico    
             
-            for aa in liste_aa :
+            for aa in liste_aa_ambigu:
                 dico_occ_cluster_couple[ cluster_name_1 ][aa] = {}
-                for aa2 in liste_aa :
+                for aa2 in liste_aa_ambigu :
                     dico_occ_cluster_couple[ cluster_name_1 ][aa][aa2] =0
 
            
@@ -199,185 +201,32 @@ def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
     for i in range(len(liSeqAli)):
         name1, seq1 = liSeqAli[i]
         cluster_name_1 = int ( name1.split()[0] )
+        taille_cluster1 = int( name1.split()[1] )
+
         for j in range(i+1, len(liSeqAli)):
             name2, seq2 = liSeqAli[j]
             cluster_name_2 = int ( name2.split()[0] )         
-    
-            if cluster_name_2 == cluster_name_1 : 
+            taille_cluster2 = int( name2.split()[1] )
+            if cluster_name_2 != cluster_name_1 : 
                 for (aa1, aa2) in zip(seq1, seq2):
                     #print("cluster :", cluster_name_1,  "aa1 : ", aa1, "aa2 :", aa2)
-                    
-                
-                    #condition Pour les AA ambigu
-                    #au niveau de chiffres je ne suis pas sûr
-
-                    # [B,Z]
-                    if aa1 == 'B' and aa2 == 'Z' :
-                        dico_occ_cluster[cluster_name_1]['D']['I'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['I'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['D']['L'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['L'] += 0.5
-
-                    # [Z,B]
-                    if aa1 == 'Z' and aa2 == 'B' :
-                        dico_occ_cluster[cluster_name_1]['I']['D'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['I']['N'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['D'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['N'] += 0.5
-
-                    # [B,J]
-                    if aa1 == 'B' and aa2 == 'J':
-                        dico_occ_cluster[cluster_name_1]['D']['Q'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['Q'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['D']['E'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['E'] += 0.5
-
-                    # [J,B]
-                    if  aa1 == 'J' and aa2 == 'B' :
-                        dico_occ_cluster[cluster_name_1]['Q']['D'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['Q']['N'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['D'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['N'] += 0.5
-
-                    # [J,Z]          
-                    if aa1 == 'J' and aa2 == 'Z':
-                        dico_occ_cluster[cluster_name_1]['Q']['I'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['Q']['L'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['L'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['I'] += 0.5
-
-                    # [Z,J]
-                    if aa1 =='Z' and aa2 == 'J':
-                        dico_occ_cluster[cluster_name_1]['I']['Q'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['Q'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['I']['E'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['E'] += 0.5
-
-                    # [J,X]
-                    if aa1 == 'J' and aa2 == 'X':
-                        for aa in liste_aa : 
-                            dico_occ_cluster[cluster_name_1]['E'][aa] += 11/40
-                            dico_occ_cluster[cluster_name_1]['Q'][aa] += 11/40
-                        
-                    # [X,J]
-                    if aa1 =='X' and aa2 == 'J':
-                        for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa]['Q'] += 11/40
-                            dico_occ_cluster[cluster_name_1][aa]['E'] += 11/40
-
-                    # [Z,X]
-                    if aa1 == 'Z' and aa2 == 'X': 
-                        for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['I'][aa] += 11/40
-                            dico_occ_cluster[cluster_name_1]['L'][aa] += 11/40
-
-                    # [X,Z]
-                    if aa2 == 'Z' and aa1 == 'X': 
-                        for aa in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa]['I'] += 11/40
-                            dico_occ_cluster[cluster_name_1][aa]['L'] += 11/40
-
-                    # [B,X]
-                    if aa1 == 'B' and aa2 == 'X' : 
-                        for aa in liste_aa : 
-                                dico_occ_cluster[cluster_name_1]['N'][aa] += 11/40
-                                dico_occ_cluster[cluster_name_1]['D'][aa] += 11/40
-
-                    # [X,B]
-                    if aa1 == 'X' and aa2 == 'B':
-                        for aa in liste_aa : 
-                                dico_occ_cluster[cluster_name_1][aa]['N'] += 11/40
-                                dico_occ_cluster[cluster_name_1][aa]['D'] += 11/40
-
-                    # [B,B]
-                    if aa1 == 'B' and aa2 =='B' :
-                        dico_occ_cluster[cluster_name_1]['D']['D'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['N'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['D']['N'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['N']['D'] += 0.5
-
-                    # [J,J]
-                    if aa1 == 'J' and aa2 =='J' :
-                        dico_occ_cluster[cluster_name_1]['Q']['E'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['Q']['Q'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['E'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['E']['Q'] += 0.5
-                    
-                    # [Z,Z]
-                    if aa1 == 'Z' and aa2 =='Z' :
-                        dico_occ_cluster[cluster_name_1]['I']['I'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['I']['L'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['I'] += 0.5
-                        dico_occ_cluster[cluster_name_1]['L']['L'] += 0.5
-                    
-                    # [X,X]
-                    if aa1 =='X' and aa2 == 'X' :
-                        for acid_a1 in liste_aa :
-                            for acid_a2 in liste_aa : 
-                                dico_occ_cluster[cluster_name_1][acid_a1][acid_a2] +=1/80 
-                                dico_occ_cluster[cluster_name_1][acid_a2][acid_a1] +=1/80
-
-                
-                    # [aa,B]
-                    if aa2 == 'B' :
-                        if aa1 in liste_aa :
-                            dico_occ_cluster[cluster_name_1][aa1]['D'] += 3/4
-                            dico_occ_cluster[cluster_name_1][aa1]['N'] += 3/4
-                    
-                    # [B,aa]
-                    if aa1 == 'B' :
-                        if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['D'][aa2] += 3/4
-                            dico_occ_cluster[cluster_name_1]['N'][aa2] += 3/4
-
-                    # [J,aa]
-                    if aa1 == 'J' :
-                        if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['E'][aa2] += 3/4
-                            dico_occ_cluster[cluster_name_1]['Q'][aa2] += 3/4
-
-                    # [aa,J]
-                    if aa2 == 'J' :
-                        if aa1 in liste_aa : 
-                            dico_occ_cluster[cluster_name_1][aa1]['E'] += 3/4
-                            dico_occ_cluster[cluster_name_1][aa1]['Q'] += 3/4
-
-                    # [Z,aa]
-                    if aa1 == 'Z' :
-                        if aa2 in liste_aa :
-                            dico_occ_cluster[cluster_name_1]['I'][aa2] += 3/4
-                            dico_occ_cluster[cluster_name_1]['L'][aa2] += 3/4
-
-                    # [aa,Z]
-                    if (aa2 == 'Z') :
-                        if aa1 in liste_aa : 
-                            dico_occ_cluster[cluster_name_1][aa1]['I'] += 3/4
-                            dico_occ_cluster[cluster_name_1][aa1]['L'] += 3/4
-
-                    # [X,aa]
-                    if aa1 == 'X' :
-                        if aa2 in liste_aa :
-                            for aa in liste_aa :
-                                dico_occ_cluster[cluster_name_1][aa][aa2] += 21/40
-
-                    # [aa,X]
-                    if aa2 == 'X':
-                        if aa1 in liste_aa : 
-                            for aa in liste_aa :
-                                dico_occ_cluster[cluster_name_1][aa1][aa] += 21/40
+                    print(aa1)
+                    print(aa2)
 
                     # les 20 aa non ambigu
-                    if aa1 in liste_aa and aa2 in liste_aa : 
+                    
+                    if aa1 in liste_aa and aa2 in liste_aa :
                         if aa1 == aa2 :
-                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] += 2                  
+                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] += 2 * ( ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 ) )
                         
                         else :        
-                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] +=  1
-                            dico_occ_cluster[ cluster_name_1 ][aa2][aa1] +=  1
+                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] += ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
+                            dico_occ_cluster[ cluster_name_1 ][aa2][aa1] += ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
 
+
+    #ici on parcours le dico qu'on a remplit avec les occurence
+    #  et on redispatch pour les aa ambigu : X J Z B 
     
-
-
     #ON VA DIVISER LES OCCU DES AA PAR LA TAILLE
     #===========================================
     #aspect du dico jusqu'ici : {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
@@ -494,12 +343,15 @@ file2 =  main_path + dossier + file_two
 
 #liSeqAli = readFastaMul(file1)
 liSeqAli = readFastaMul(file2)
+
 dico_occ_cluster_couple = createDicoVideCoupleAA(liSeqAli)
+"""
 #print(dico_occ_cluster_couple)
+"""
 dico_occ_cluster = createDicoVideAA(liSeqAli)
 #print("Dico vide :")
 #print(dico_occ_cluster, "\n")
-
+"""
 ##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec 
 dFreqAA = (DFreqAA(liSeqAli, dico_occ_cluster))
 print("\n")
@@ -511,3 +363,7 @@ print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
 dicoFreqAA = freqAA(path_clust60)
 dicoFreqCoupleAA = FreqCoupleAA(path_clust60)
 print(computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, 1))
+"""
+dico = {}
+#print(DFreqAA(liSeqAli, dico_occ_cluster))
+print(dicoFreqCoupleAA(liSeqAli, dico_occ_cluster_couple, dico))

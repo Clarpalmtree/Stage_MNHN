@@ -481,3 +481,162 @@ dico_occ_cluster[cluster_name_1]['D']['N'] += 1/20
                     dico_occ_cluster[cluster_name_1]['Y']['D'] += 1/20
                     dico_occ_cluster[cluster_name_1]['V']['D'] += 1/20
 """
+
+""" freq couple AA
+                    # [B,Z]
+                    if aa1 == 'B' and aa2 == 'Z' :
+                        dico_occ_cluster[cluster_name_1]['D']['I'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['I'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['D']['L'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['L'] += 0.5
+
+                    # [Z,B]
+                    if aa1 == 'Z' and aa2 == 'B' :
+                        dico_occ_cluster[cluster_name_1]['I']['D'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['I']['N'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['D'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['N'] += 0.5
+
+                    # [B,J]
+                    if aa1 == 'B' and aa2 == 'J':
+                        dico_occ_cluster[cluster_name_1]['D']['Q'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['Q'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['D']['E'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['E'] += 0.5
+
+                    # [J,B]
+                    if  aa1 == 'J' and aa2 == 'B' :
+                        dico_occ_cluster[cluster_name_1]['Q']['D'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['Q']['N'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['D'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['N'] += 0.5
+
+                    # [J,Z]          
+                    if aa1 == 'J' and aa2 == 'Z':
+                        dico_occ_cluster[cluster_name_1]['Q']['I'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['Q']['L'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['L'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['I'] += 0.5
+
+                    # [Z,J]
+                    if aa1 =='Z' and aa2 == 'J':
+                        dico_occ_cluster[cluster_name_1]['I']['Q'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['Q'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['I']['E'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['E'] += 0.5
+
+                    # [J,X]
+                    if aa1 == 'J' and aa2 == 'X':
+                        for aa in liste_aa : 
+                            dico_occ_cluster[cluster_name_1]['E'][aa] += 11/40
+                            dico_occ_cluster[cluster_name_1]['Q'][aa] += 11/40
+                        
+                    # [X,J]
+                    if aa1 =='X' and aa2 == 'J':
+                        for aa in liste_aa :
+                            dico_occ_cluster[cluster_name_1][aa]['Q'] += 11/40
+                            dico_occ_cluster[cluster_name_1][aa]['E'] += 11/40
+
+                    # [Z,X]
+                    if aa1 == 'Z' and aa2 == 'X': 
+                        for aa in liste_aa :
+                            dico_occ_cluster[cluster_name_1]['I'][aa] += 11/40
+                            dico_occ_cluster[cluster_name_1]['L'][aa] += 11/40
+
+                    # [X,Z]
+                    if aa2 == 'Z' and aa1 == 'X': 
+                        for aa in liste_aa :
+                            dico_occ_cluster[cluster_name_1][aa]['I'] += 11/40
+                            dico_occ_cluster[cluster_name_1][aa]['L'] += 11/40
+
+                    # [B,X]
+                    if aa1 == 'B' and aa2 == 'X' : 
+                        for aa in liste_aa : 
+                                dico_occ_cluster[cluster_name_1]['N'][aa] += 11/40
+                                dico_occ_cluster[cluster_name_1]['D'][aa] += 11/40
+
+                    # [X,B]
+                    if aa1 == 'X' and aa2 == 'B':
+                        for aa in liste_aa : 
+                                dico_occ_cluster[cluster_name_1][aa]['N'] += 11/40
+                                dico_occ_cluster[cluster_name_1][aa]['D'] += 11/40
+
+                    # [B,B]
+                    if aa1 == 'B' and aa2 =='B' :
+                        dico_occ_cluster[cluster_name_1]['D']['D'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['N'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['D']['N'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['N']['D'] += 0.5
+
+                    # [J,J]
+                    if aa1 == 'J' and aa2 =='J' :
+                        dico_occ_cluster[cluster_name_1]['Q']['E'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['Q']['Q'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['E'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['E']['Q'] += 0.5
+                    
+                    # [Z,Z]
+                    if aa1 == 'Z' and aa2 =='Z' :
+                        dico_occ_cluster[cluster_name_1]['I']['I'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['I']['L'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['I'] += 0.5
+                        dico_occ_cluster[cluster_name_1]['L']['L'] += 0.5
+                    
+                    # [X,X]
+                    if aa1 =='X' and aa2 == 'X' :
+                        for acid_a1 in liste_aa :
+                            for acid_a2 in liste_aa : 
+                                dico_occ_cluster[cluster_name_1][acid_a1][acid_a2] +=1/80 
+                                dico_occ_cluster[cluster_name_1][acid_a2][acid_a1] +=1/80
+
+                
+                    # [aa,B]
+                    if aa2 == 'B' :
+                        if aa1 in liste_aa :
+                            dico_occ_cluster[cluster_name_1][aa1]['D'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['N'] += 3/4
+                    
+                    # [B,aa]
+                    if aa1 == 'B' :
+                        if aa2 in liste_aa :
+                            dico_occ_cluster[cluster_name_1]['D'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['N'][aa2] += 3/4
+
+                    # [J,aa]
+                    if aa1 == 'J' :
+                        if aa2 in liste_aa :
+                            dico_occ_cluster[cluster_name_1]['E'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['Q'][aa2] += 3/4
+
+                    # [aa,J]
+                    if aa2 == 'J' :
+                        if aa1 in liste_aa : 
+                            dico_occ_cluster[cluster_name_1][aa1]['E'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['Q'] += 3/4
+
+                    # [Z,aa]
+                    if aa1 == 'Z' :
+                        if aa2 in liste_aa :
+                            dico_occ_cluster[cluster_name_1]['I'][aa2] += 3/4
+                            dico_occ_cluster[cluster_name_1]['L'][aa2] += 3/4
+
+                    # [aa,Z]
+                    if (aa2 == 'Z') :
+                        if aa1 in liste_aa : 
+                            dico_occ_cluster[cluster_name_1][aa1]['I'] += 3/4
+                            dico_occ_cluster[cluster_name_1][aa1]['L'] += 3/4
+
+                    # [X,aa]
+                    if aa1 == 'X' :
+                        if aa2 in liste_aa :
+                            for aa in liste_aa :
+                                dico_occ_cluster[cluster_name_1][aa][aa2] += 21/40
+
+                    # [aa,X]
+                    if aa2 == 'X':
+                        if aa1 in liste_aa : 
+                            for aa in liste_aa :
+                                dico_occ_cluster[cluster_name_1][aa1][aa] += 21/40
+
+
+"""

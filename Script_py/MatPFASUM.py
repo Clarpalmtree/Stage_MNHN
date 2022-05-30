@@ -4,6 +4,7 @@ import pandas as pd
 from readFasta import readFastaMul
 from pathlib import Path
 
+## VARIABLE GLOBAL...................................................................................................................................
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
             'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
@@ -11,193 +12,27 @@ liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I',
 liste_aa_ambigu = ['X', 'Z', 'J', 'B', 'A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G',
                    'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
+dAmbigu = {'Z': { 'tab' :['I', 'L'], 'valeur' : 1/2 }, 'J' : { 'tab': ['Q' , 'E'], 'valeur' : 1/2 } , 'B' :{'tab': ['N', 'D'], 'valeur' : 1/2}, 
+             'X' :{ 'tab': ['A', 'E', 'D', 'R', 'N','C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'],
+            'valeur' : 1/20} }
 
+## ..................................................................................................................................................
 
-
-### CALCUL DES FREQENCES DES PAIRS D'AA ...............................................................................
-#......................................................................................................................
-def createDicoVideAA(liSeqAli):
-    """
-    input : une liste de tuple (seq, nom)
-    output : un dico vide de la forme :
-                {<num_cluster> : {'taille_cluster' : <nb_seq_ds_cluster>, A : 0, T : 0, D : 0}}
-    """
-
-    #Création d'un dico format {1: {taille_cluster : 2, A : 0, T : 0 , C : 0, D : 0}}
-    dico_occ_cluster = {}
-    
-    #parcours des Séquences
-    for i in range(len(liSeqAli)):
-
-        #On extrait les infos
-        name1, seq1 = liSeqAli[i]
-        cluster_name_1 = int ( name1.split()[0] )
-        
-        #si le cluster existe pas dans le dico on le rajoute
-        if not cluster_name_1 in dico_occ_cluster.keys():
-            #avec son dico qui contiendra les occurences
-            dico_occ_cluster[ cluster_name_1 ] = {}
-
-        #parcours de acide aminées
-        for k in range(len(seq1)):
-
-            #j'ajoute +1 à l'acide amineé (ici je compte)
-
-            #si taille n'existe pas encore
-            if not "taille_cluster" in dico_occ_cluster[ cluster_name_1 ].keys():
-                taille_dico = int( name1.split()[1] )
-                dico_occ_cluster[ cluster_name_1 ]["taille_cluster"] = taille_dico    
-            
-            for aa in liste_aa_ambigu :
-                dico_occ_cluster[ cluster_name_1 ][aa] = 0
-           
-    return dico_occ_cluster
-
-
-
-def DFreqAA( liSeqAli, dico_occ_cluster ):
+### FONCTION CALCULE DE FREQUENCE D'AA...............................................................................................................
+#....................................................................................................................................................
+def FreqAA( liSeqAli ):
     """
         input : une liste de tuple (seq, nom), un dico vide
         output : un de la forme : { A : 0, T : 0, D : 0, ...}
     """
-    
-    #parcours des Séquences
-    for i in range(len(liSeqAli)):
-    
-        #On extrait les infos
-        name1, seq1 = liSeqAli[i]
-        cluster_name_1 = int ( name1.split()[0] )
-        for k in range (len(seq1)):
-            
-            if seq1[k] in dico_occ_cluster[cluster_name_1] : 
-                    dico_occ_cluster[ cluster_name_1 ][seq1[k]] = dico_occ_cluster[ cluster_name_1 ][seq1[k]] + 1
 
-    dico_occ_final={}
-    #diviser occ par la taille du cluster 
-    for cluster, dico_valeur in dico_occ_cluster.items():
+    dico_occ = {}
+    tab_couple = []
+    for aa in liste_aa_ambigu :
+        dico_occ[aa]={}
+        for aaa in liste_aa_ambigu :
+            dico_occ[aa][aaa] =0
 
-        for key, occ in dico_valeur.items():
-            
-            #print("occ", occ)
-            if key == 'Z' :
-                dico_occ_cluster[cluster]['I'] += occ/2
-                dico_occ_cluster[cluster]['L'] += occ/2
-            
-            if key == 'J' :
-                dico_occ_cluster[cluster]['E'] += occ/2
-                dico_occ_cluster[cluster]['Q'] += occ/2
-
-            if key == 'B' :
-                dico_occ_cluster[cluster]['N'] += occ/2
-                dico_occ_cluster[cluster]['D'] += occ/2
-            
-            if key == 'X' :
-                for aa in liste_aa :
-                    dico_occ_cluster[cluster][aa] += occ/20
-
-    
-            if not key == "taille_cluster" or key in liste_aa:
-               
-                #print(dico_occ_cluster)
-
-                dico_occ_cluster[cluster][key] = occ / dico_occ_cluster[cluster]["taille_cluster"]
-                #print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key])
-
-                #si l'acie aminée existe pas dans le dico final
-                if not key in dico_occ_final.keys():
-                    dico_occ_final[key] = 0
-
-                dico_occ_final[key] += dico_occ_cluster[cluster][key]
-
-    [dico_occ_final.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
-    
-    #on récupère le nombre d'aa au total
-    tot =0
-    for ele in dico_occ_final :
-        tot+=dico_occ_final[ele]
-   
-   #DECOMMENTER ICI POUR FAIRE DE PETIT ET VERIFIER LES FRÉQUENCES
-
-    for AA in dico_occ_final:
-       dico_occ_final[AA] = dico_occ_final[AA]/tot
-    
-
-    #vérfication
-    
-    somme=0
-    for AA in dico_occ_final:
-        somme+=dico_occ_final[AA]
-    print("somme des fréquences = ", somme, "\n")
-    
-
-    return dico_occ_final, tot
-
-##Multiple pour toutes les données dans le dossier
-def freqAA ( directory) :
-
-    dFreqAA={}
-
-    for files in directory :
-        seq = readFastaMul(files)
-        doccAA = createDicoVideAA(seq)
-        dFreqAA, tot = DFreqAA(seq, doccAA, dFreqAA)
-
-    for AA in dFreqAA:
-        dFreqAA[AA] = dFreqAA[AA]/tot
-
-    return dFreqAA
-
-
-### CALCUL DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.....................................................................
-#......................................................................................................................
-def createDicoVideCoupleAA(liSeqAli):
-    """
-        input : une liste de tuple ( nom / seq)
-        output : un dico vide de la forme :
-                {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
-    """
-
-    dico_occ_cluster_couple = {}
-    
-    #parcours des Séquences
-    for i in range(len(liSeqAli)):
-
-        #On extrait les infos
-        name1, seq1 = liSeqAli[i]
-        cluster_name_1 = int ( name1.split()[0] )
-        
-        #si le cluster existe pas dans le dico on le rajoute
-        if not cluster_name_1 in dico_occ_cluster_couple.keys():
-            #avec son dico qui contiendra les occurences
-            dico_occ_cluster_couple[ cluster_name_1 ] = {}
-
-        #parcours de acide aminées
-        for k in range(len(seq1)):
-
-            #j'ajoute +1 à l'acide amineé (ici je compte)
-
-            #si taille n'existe pas encore
-            if not "taille_cluster" in dico_occ_cluster_couple[ cluster_name_1 ].keys():
-                taille_dico = int( name1.split()[1] )
-                dico_occ_cluster_couple[ cluster_name_1 ]["taille_cluster"] = taille_dico    
-            
-            for aa in liste_aa_ambigu:
-                dico_occ_cluster_couple[ cluster_name_1 ][aa] = {}
-                for aa2 in liste_aa_ambigu :
-                    dico_occ_cluster_couple[ cluster_name_1 ][aa][aa2] =0
-
-           
-    return dico_occ_cluster_couple
-            
-            
-
-def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
-    """
-        input : une liste de tuple (nom, seq) et un dico vide
-        output : un dico de la fréquence des pairs de couple d' aa de la forme : 
-                { 'A' : {A: 0, T : 0, D : 0}, 'T' : {A : 0, T : 0, D : 0}, 'D' : {A : 0, T : 0, D : 0}, ...}
-    """
-    
     for i in range(len(liSeqAli)):
         name1, seq1 = liSeqAli[i]
         cluster_name_1 = int ( name1.split()[0] )
@@ -207,102 +42,135 @@ def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
             name2, seq2 = liSeqAli[j]
             cluster_name_2 = int ( name2.split()[0] )         
             taille_cluster2 = int( name2.split()[1] )
+
+            #on calcule les pairs entre les clusters
             if cluster_name_2 != cluster_name_1 : 
                 for (aa1, aa2) in zip(seq1, seq2):
-                    #print("cluster :", cluster_name_1,  "aa1 : ", aa1, "aa2 :", aa2)
-                    print(aa1)
-                    print(aa2)
-
-                    # les 20 aa non ambigu
-                    
-                    if aa1 in liste_aa and aa2 in liste_aa :
-                        if aa1 == aa2 :
-                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] += 2 * ( ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 ) )
+                    if aa1 in liste_aa_ambigu and aa2 in liste_aa_ambigu :
+                        dico_occ[aa1][aa2] +=  ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
                         
-                        else :        
-                            dico_occ_cluster[ cluster_name_1 ][aa1][aa2] += ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
-                            dico_occ_cluster[ cluster_name_1 ][aa2][aa1] += ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
+                    
 
+    # on redispatch les aa ambigu  
+    # selon si on a au moins un aa ambigu dans notre pair
+    # ou si les deux aa sont ambigu
+    # de plus on vérifie si la pair existe, si elle n'est pas nulle
+    # puisque je parcours un dico avec toutes les pairs possibles  
 
-    #ici on parcours le dico qu'on a remplit avec les occurence
-    #  et on redispatch pour les aa ambigu : X J Z B 
+    for aa1 in dico_occ :
+        for aa2 in dico_occ[aa1]  :
+            
+            # je met les couples dans un tableau pour pouvoir les récuperer plus tard
+            # et ainsi calculer les fréquences des couples présent dans mon fichier
+
+            if (aa1 in dAmbigu and aa2 in liste_aa) and (dico_occ[aa1][aa2] != 0.0) : 
+                for aa in dAmbigu[aa1]['tab'] :
+                    dico_occ[aa][aa2] += dico_occ[aa1][aa2] * dAmbigu[aa1]['valeur']
+                    tab_couple.append( { "couple": aa + aa2, "aa1": aa, "aa2" : aa2 })
+
+            if (aa2 in dAmbigu and aa1 in liste_aa) and (dico_occ[aa1][aa2] != 0.0):
+                for aa in dAmbigu[aa2]['tab'] :
+                    dico_occ[aa1][aa] += dico_occ[aa1][aa2] * dAmbigu[aa2]['valeur']
+                    tab_couple.append( { "couple": aa1 + aa, "aa1": aa1, "aa2" : aa })
+
+            if (aa1 in dAmbigu and aa2 in dAmbigu) and (dico_occ[aa1][aa2] != 0.0) :
+                for (ele1, ele2) in zip(dAmbigu[aa1]['tab'], dAmbigu[aa2]['tab']) :
+                    dico_occ[ele1][ele2] += dico_occ[aa1][aa2] * dAmbigu[aa1]['valeur'] * dAmbigu[aa2]['valeur']
+                    tab_couple.append( { "couple": ele1 + ele2, "aa1": ele1, "aa2" : ele2 })
+
+            if (aa1 in liste_aa and aa2 in liste_aa) and (dico_occ[aa1][aa2] != 0.0):
+                tab_couple.append( { "couple": aa1 + aa2, "aa1": aa1, "aa2" : aa2 })
+
+   
+    # Après avori redispatché je supprime les aa ambigu de mon dico
+    [dico_occ.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
+    for ele in dico_occ :
+        [dico_occ[ele].pop(key, None) for key in ['X', 'Z', 'J', 'B']]
+
+    # Enfin je calcule la freq des aa 
+    dico_freq = {}
+    somme_all = 0
+    for aa in liste_aa :
+        dico_freq[aa] = 0
+
+    for a in dico_occ :
+        for aa in dico_occ[a] :
+            #Pair identique :
+            if a == aa :
+                dico_freq[a] += dico_occ[a][aa]
+                somme_all += dico_occ[a][aa]
+
+            #Pair non identique
+            else :
+                dico_freq[a] += dico_occ[a][aa] / 2
+                dico_freq[a] += dico_occ[aa][a] / 2
+                somme_all += dico_occ[a][aa] 
+
+    #On divise par le nombre de pair totaux
+    for ele in dico_freq :
+        dico_freq[ele] = dico_freq[ele] / somme_all
     
-    #ON VA DIVISER LES OCCU DES AA PAR LA TAILLE
-    #===========================================
-    #aspect du dico jusqu'ici : {<num_cluster> : {'taille_cluster' : <taille>, 'A' : {A: 0, T : 0, D : 0}}}
-    #boucle cluster
-    for cluster in dico_occ_cluster :
-        
-        #boucle acide aminé 
-        for key in dico_occ_cluster[cluster]:
-
-            if not key == "taille_cluster":
-
-                #print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key], "\n")
-
-                #boucle occurence / pair 
-                for cle, valeur in dico_occ_cluster[cluster][key].items() :
-
-                    #DIVISION
-                    dico_occ_cluster[cluster][key][cle] = valeur / dico_occ_cluster[cluster]["taille_cluster"]
-
-        
-    #Additionner les AA ICI
-    #========================
-
-
-    #boucle cluster
-    for cluster in dico_occ_cluster :
-        
-        #boucle acide aminé 
-        for aa in dico_occ_cluster[cluster]:
-
-            if not aa == "taille_cluster":
-
-                #print("dico_occ_cluster[cluster][key]", dico_occ_cluster[cluster][key], "\n")
-
-
-                if not aa in dico_aa_final.keys() :
-                    dico_aa_final[aa] = {}
-
-
-                for key in dico_occ_cluster[cluster][aa] :
-                    if not key in dico_aa_final[aa].keys() :
-                        dico_aa_final[aa][key] = dico_occ_cluster[cluster][aa][key]
-                    else :
-                        dico_aa_final[aa][key] += dico_occ_cluster[cluster][aa][key]
-
-
-    #print("DICO FINAL : ", dico_aa_final )
-    tot = 0
-    for aa1 in dico_aa_final :
-        for aa2 in dico_aa_final[aa2] : 
-            tot+=dico_aa_final[aa1][aa2]
-    #print("le total = ", tot, "\n")
-    
-    ##DECOMMENTER ICI POUR FAIRE DE PETIT TEST
+    #vérification
     """
-    for aa1 in dico_aa_final :
-        for aa2 in dico_aa_final[aa1] :
-            dico_aa_final[aa1][aa2] = dico_aa_final[aa1][aa2] / tot
+    tot= 0
+    for ele in dico_freq :
+        tot +=dico_freq[ele]
+    print("la somme est =", tot)
     """
 
-    return dico_aa_final, tot
+    return dico_freq, tab_couple
 
-def FreqCoupleAA ( directory) :
 
-    dFreqPairCoupleAA={}
+### FONCTION CALCULE DES FRÉQUENCES DES PAIRS D'AA...................................................................................................
+#....................................................................................................................................................
+def FreqCoupleAA (dico_freq , tab_couple) :
+    """
+        input : une liste de tuple (nom, seq) et un dico vide
+        output : un dico de la fréquence des pairs d'AA de la forme : 
+                { 'A' : {A: 0, T : 0, D : 0}, 'T' : {A : 0, T : 0, D : 0}, 'D' : {A : 0, T : 0, D : 0}, ...}
+    """
 
-    for files in directory :
-        seq =  readFastaMul(files)
-        doccAA = createDicoVideCoupleAA(seq)
-        dFreqPairCoupleAA, tot = dicoFreqCoupleAA(seq, doccAA, dFreqPairCoupleAA)
+    dFreqCouple = {}
+    for aa in liste_aa :
+        dFreqCouple[aa]={}
+        for aaa in liste_aa :
+            dFreqCouple[aa][aaa] = 0
 
-    for AA in dFreqPairCoupleAA:
-        dFreqPairCoupleAA[AA] = dFreqPairCoupleAA[AA]/tot
 
-    return dFreqPairCoupleAA
+    #cette partie va sans doute être modifié car elle peut s'écrire juste ainsi
+    """
+    for couple in tab_couple :
+        dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] = 2*( dico_freq [ couple["aa1"] ] * dico_freq[ couple["aa2"] ] )
 
+    """
+    #cependant si j'ai un couple AT, je voulais que son inverse TA puisse être présent dans mon dico
+    #et pas juste faire 2* qlqch
+    # en effet si je fait 2* ça revient au même cependant dans mon dico j'aurai juste
+    # la valeur de AT*2 (il prend en compte TA) mais mon couple TA sera égal à 0
+    # {A : {T: 2, C:0}, T: {A :0, C:0}}
+    #mais moi je le veux ainsi : {A : {T: 1, C:0}, T: {A :1, C:0}}
+    #donc je fais le code ci-dessous
+
+    for couple in tab_couple :
+        if couple["aa1"] ==  couple["aa2"] :
+            dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] = 2*( dico_freq [ couple["aa1"] ] * dico_freq[ couple["aa2"] ] )
+
+        else : 
+            dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] =  dico_freq [ couple["aa1"] ] * dico_freq[ couple["aa2"] ] 
+            dFreqCouple[ couple["aa2"] ][ couple["aa1"] ] =  dico_freq [ couple["aa1"] ] * dico_freq[ couple["aa2"] ] 
+
+
+    #si je ne fais pas ça ma matrice ne va pas faire prendre en compte TA 
+    # et je trouve ça bizarre
+    # même si ça doit revenir au même
+
+    #print(dFreqCouple)
+
+    return dFreqCouple
+
+
+### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
+#....................................................................................................................................................
 def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
     """ input : 1 dico des fréquences des acides aminés + 1 dico des fréquences des pairs d'aa
         output : une matrice
@@ -322,6 +190,9 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
     df_mat = pd.DataFrame.from_dict(mat)
 
     return df_mat
+
+
+
 
 ###TEST CALCULE FREQUENCE  PAIR AA ...........................................................
 #.............................................................................................
@@ -344,26 +215,7 @@ file2 =  main_path + dossier + file_two
 #liSeqAli = readFastaMul(file1)
 liSeqAli = readFastaMul(file2)
 
-dico_occ_cluster_couple = createDicoVideCoupleAA(liSeqAli)
-"""
-#print(dico_occ_cluster_couple)
-"""
-dico_occ_cluster = createDicoVideAA(liSeqAli)
-#print("Dico vide :")
-#print(dico_occ_cluster, "\n")
-"""
-##TEST avant de calculer les freq dans le main, voir fin des fonctions commenté avec 
-dFreqAA = (DFreqAA(liSeqAli, dico_occ_cluster))
-print("\n")
-dfreqPair = dicoFreqCoupleAA(liSeqAli,dico_occ_cluster_couple )
-print(dfreqPair)
-print(computeMatrixPFASUM(dFreqAA, dfreqPair, 1))
+dFreqAA, tab_couple = FreqAA(liSeqAli)
+dFreqCouple = FreqCoupleAA(dFreqAA, tab_couple)
+print(computeMatrixPFASUM(dFreqAA, dFreqCouple, 1))
 
-##TEST SUR TOUS LES FICHIERS
-dicoFreqAA = freqAA(path_clust60)
-dicoFreqCoupleAA = FreqCoupleAA(path_clust60)
-print(computeMatrixPFASUM(dicoFreqAA, dicoFreqCoupleAA, 1))
-"""
-dico = {}
-#print(DFreqAA(liSeqAli, dico_occ_cluster))
-print(dicoFreqCoupleAA(liSeqAli, dico_occ_cluster_couple, dico))

@@ -110,7 +110,7 @@ def FreqAA( dFreqAA, liSeqAli, tab_couple ):
                 tab_couple.append( { "couple": aa1 + aa2, "aa1": aa1, "aa2" : aa2 })
 
     
-    # Après avori redispatché je supprime les aa ambigu de mon dico
+    # Après avoir redispatché je supprime les aa ambigu de mon dico
     [dico_occ.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
     for ele in dico_occ :
         [dico_occ[ele].pop(key, None) for key in ['X', 'Z', 'J', 'B']]
@@ -254,7 +254,7 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
                 # application de la proba conditionnelle vu dans l'article "sequence context-specific profiles.."
                 # et le cours donnée "cours_seq" parce que on peut aussi l'écrire comme ça donc bon
                 mat[aa1][aa2] = round(
-                    (1/scaling_factor)*log2(freqPairs[aa1][aa2]/freqAA[aa1]))
+                    scaling_factor*log2(freqPairs[aa1][aa2]/freqAA[aa1]))
             else:
                 mat[aa1][aa2] = 0
     #df_mat = pd.DataFrame.from_dict(mat)
@@ -270,6 +270,8 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 
 ###TEST CALCULE FREQUENCE  PAIR AA ..................................................................................................................
 #....................................................................................................................................................
+
+
 #il faut juste changer le main_path normalement pour tester ici les fonctions
 
 main_path = "/home/ctoussaint"
@@ -291,7 +293,13 @@ directory = directory.iterdir()
 
 dFreqAA, tab = MultiFreq(directory)
 dFreqCouple = FreqCoupleAA(dFreqAA, tab)
-matrix = computeMatrixPFASUM(dFreqAA, dFreqCouple, 1)
+
+#j'attribue un scaling factor de 2 puisque dans l'article 
+# Amino acid substitution matrices from protein blocks
+# "Lod ratios are multiplied by a scaling factor of 2"
+matrix = computeMatrixPFASUM(dFreqAA, dFreqCouple, 2)
+
+print(matrix)
 
 ###Tracer le heatmap.................................................................................................................................
 #....................................................................................................................................................

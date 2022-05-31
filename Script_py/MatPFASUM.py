@@ -299,7 +299,7 @@ dFreqCouple = FreqCoupleAA(dFreqAA, tab)
 # "Lod ratios are multiplied by a scaling factor of 2"
 matrix = computeMatrixPFASUM(dFreqAA, dFreqCouple, 2)
 
-print(matrix)
+#print(matrix)
 
 ###Tracer le heatmap.................................................................................................................................
 #....................................................................................................................................................

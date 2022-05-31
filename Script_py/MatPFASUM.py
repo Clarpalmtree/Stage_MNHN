@@ -1,8 +1,10 @@
-import os
 from math import log2
 import pandas as pd
 from readFasta import readFastaMul
 from pathlib import Path
+import matplotlib.pyplot as plt
+import seaborn as sb
+import numpy as np
 
 ## VARIABLE GLOBAL...................................................................................................................................
 
@@ -176,6 +178,10 @@ def MultiFreq(directory) :
     for ele in dFreqAA :
         dFreqAA[ele] = dFreqAA[ele] /tot
 
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_freqAA = f"{path_folder_Result}/PFASUM_freq_AA"
+    np.save(path_freqAA, dFreqAA) 
+
     return dFreqAA, tab_couple
 
 
@@ -251,9 +257,13 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
                     (1/scaling_factor)*log2(freqPairs[aa1][aa2]/freqAA[aa1]))
             else:
                 mat[aa1][aa2] = 0
-    df_mat = pd.DataFrame.from_dict(mat)
+    #df_mat = pd.DataFrame.from_dict(mat)
 
-    return df_mat
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_matrix = f"{path_folder_Result}/PFASUM_score"
+    np.save(path_matrix, mat) 
+
+    return mat
 
 
 
@@ -266,18 +276,6 @@ main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 cluster60 = "/fichiers_cluster60"
 path_clust60 = main_path + cluster60
-
-#dans le fichier test vous pouvez trouvez des fichiers cluster60 à tester
-file_one= "PF00002.27_Cluster60.fasta"
-#le brs est un fichier dans lequel je modifie moi même pour tester diff cas de figure
-#c'est un fichier petit créer par moi même pour vérifier si mes résultats sont cohérents
-file_two = "brs.fasta_Cluster60.fasta"
-file1 = main_path + dossier + file_one
-file2 =  main_path + dossier + file_two
-
-
-#liSeqAli = readFastaMul(file1)
-#liSeqAli = readFastaMul(file1)
 
 
 """
@@ -293,6 +291,15 @@ directory = directory.iterdir()
 
 dFreqAA, tab = MultiFreq(directory)
 dFreqCouple = FreqCoupleAA(dFreqAA, tab)
-print(computeMatrixPFASUM(dFreqAA, dFreqCouple, 1))
+matrix = computeMatrixPFASUM(dFreqAA, dFreqCouple, 1)
 
-
+path_folder = "/home/ctoussaint/Stage_MNHN/test/result"
+titre = "PFASUM_TEST"
+heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
+heatmap = sb.heatmap(heatmap_matrix, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+plt.yticks(rotation=0) 
+heatmap_figure = heatmap.get_figure()    
+plt.title("PFASUM_TEST")
+plt.close()
+path_save_fig = f"{path_folder}/{titre}.png"
+heatmap_figure.savefig(path_save_fig, dpi=400)

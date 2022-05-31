@@ -268,8 +268,8 @@ def computeMatrixPFASUM(freqAA, freqPairs, scaling_factor):
 
 
 
-###TEST CALCULE FREQUENCE  PAIR AA ...........................................................
-#.............................................................................................
+###TEST CALCULE FREQUENCE  PAIR AA ..................................................................................................................
+#....................................................................................................................................................
 #il faut juste changer le main_path normalement pour tester ici les fonctions
 
 main_path = "/home/ctoussaint"
@@ -293,6 +293,8 @@ dFreqAA, tab = MultiFreq(directory)
 dFreqCouple = FreqCoupleAA(dFreqAA, tab)
 matrix = computeMatrixPFASUM(dFreqAA, dFreqCouple, 1)
 
+###Tracer le heatmap.................................................................................................................................
+#....................................................................................................................................................
 path_folder = "/home/ctoussaint/Stage_MNHN/test/result"
 titre = "PFASUM_TEST"
 heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 

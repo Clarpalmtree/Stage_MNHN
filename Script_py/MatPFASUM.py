@@ -73,11 +73,13 @@ def FreqCouple( dFreqAA, liSeqAli, tab_couple ):
                     for (aa1, aa2) in zip(seq1, seq2):
                         if aa1 in liste_aa_ambigu and aa2 in liste_aa_ambigu :
                             dFreqCouple[aa1][aa2] +=  ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
+                            dFreqCouple[aa2][aa1] +=  ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
 
             else :
                 for (aa1, aa2) in zip(seq1, seq2):
                         if aa1 in liste_aa_ambigu and aa2 in liste_aa_ambigu :
                             dFreqCouple[aa1][aa2] +=  ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
+                            dFreqCouple[aa2][aa1] +=  ( 1 / taille_cluster1 ) * ( 1 / taille_cluster2 )
 
                    
     # on redispatch les aa ambigu  
@@ -135,6 +137,8 @@ def FreqCouple( dFreqAA, liSeqAli, tab_couple ):
 
     #print(dFreqAA)
 
+    
+        
     return dFreqAA, tab_couple
 
 
@@ -165,9 +169,9 @@ def FreqSimple(dicoCouple):
 
 
 
-### FONCTION QUI RENVOIE UN DICO DES FRÉQUENCES D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER...................................................
+### FONCTION QUI RENVOIE UN DICO DES FRÉQUENCES D'AA DE TOUS LES FICHIERS CONTENUE DANS UN DOSSIER...................................................
 #....................................................................................................................................................
-def MultiFreqCouple(directory) :
+def MultiFreqCouple(directory, main_path, dossier) :
     """
         input : le chemin dans lequel se trouve tous les fichiers dont on veut les fréquences
         output : un dico de fréquence d'AA  : { A : 0, T : 0, D : 0, ...} et un tableau
@@ -190,10 +194,11 @@ def MultiFreqCouple(directory) :
 
     for aa1 in dFreqCouple :
         for aa2 in dFreqCouple[aa1] :
-
+            
+            #je divise par le nombre de fichier
             dFreqCouple[aa1][aa2] = dFreqCouple[aa1][aa2] /tot
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_folder_Result = main_path + dossier + "result"
     path_freqCouple = f"{path_folder_Result}/PFASUM_freq_AA"
     np.save(path_freqCouple, dFreqCouple) 
 
@@ -256,7 +261,7 @@ def peij(dFreqSimple , tab) :
 
 ### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
 #....................................................................................................................................................
-def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
+def computeMatrixPFASUM(peij, freqPairs, scaling_factor, main_path, dossier):
     """ input : 1 dico des fréquences des acides aminés + 1 dico des fréquences des pairs d'aa
         output : une matrice
     """
@@ -274,7 +279,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
                 mat[aa1][aa2] = 0
     #df_mat = pd.DataFrame.from_dict(mat)
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_folder_Result = main_path + dossier + "result"
     path_matrix = f"{path_folder_Result}/PFASUM_score"
     np.save(path_matrix, mat) 
 
@@ -301,8 +306,9 @@ directory = directory.iterdir()
 
 t = Timer()
 t.start()
-dFreqCouple, tab = MultiFreqCouple(directory)
 
+
+dFreqCouple, tab = MultiFreqCouple(directory, main_path, dossier)
 dicoFeqSimple = FreqSimple(dFreqCouple)
 Peij = peij(dicoFeqSimple, tab)
 
@@ -310,20 +316,23 @@ Peij = peij(dicoFeqSimple, tab)
 #j'attribue un scaling factor de 2 puisque dans l'article 
 # Amino acid substitution matrices from protein blocks
 # "Lod ratios are multiplied by a scaling factor of 2"
-matrix = computeMatrixPFASUM(Peij, dFreqCouple, 2)
-print(pd.DataFrame.from_dict(matrix))
+matrix = computeMatrixPFASUM(Peij, dFreqCouple, 2, main_path, dossier)
 
 
-###Tracer le heatmap.................................................................................................................................
+
+###Tracer la heatmap.................................................................................................................................
 #....................................................................................................................................................
+
 path_folder = main_path + dossier + "result"
 titre = "PFASUM_TEST"
 heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
 heatmap = sb.heatmap(heatmap_matrix, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
 plt.yticks(rotation=0) 
 heatmap_figure = heatmap.get_figure()    
-plt.title("PFASUM_TEST")
+plt.title(titre)
 plt.close()
 path_save_fig = f"{path_folder}/{titre}.png"
 heatmap_figure.savefig(path_save_fig, dpi=400)
-t.stop("Fin construction Matrice PFASUM")
+
+t.stop("Fin construction Matrice")
+

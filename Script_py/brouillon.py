@@ -915,4 +915,19 @@ def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
 
     return dico_aa_final, tot
 
+"""
+     #On divise par le nombre de pair totaux
+    for ele in dico_freq :
+        dico_freq[ele] = dico_freq[ele] / somme
+        #ajout des fréquences dans le dico
+        dFreqAA[ele] += dico_freq[ele]
+    #vérification
+    
+    tot= 0
+    for ele in dico_freq :
+        tot +=dico_freq[ele]
+    print("la somme est =", tot)
+    
+    #print(tab_couple)
 
+"""

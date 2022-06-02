@@ -1,4 +1,3 @@
-import os
 from Similarite import perID
 from readFasta import readFastaMul
 
@@ -16,4 +15,3 @@ def BonCluster( liSeqAli ):
             
             print( "num cluster seq 1: ", cluster_name_1, " and num_cluster seq 2: ", num_cluster2, " perID = ", pID )
     
-

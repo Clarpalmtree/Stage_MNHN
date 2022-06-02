@@ -1,13 +1,14 @@
-from readFasta import readFastaMul
 import numpy as np
 import utils as ut
-
+from sklearn.cluster import AgglomerativeClustering
+from readFasta import readFastaMul
 
 liste_aa_ambi= ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K',
                 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'J', 'Z', 'X']
 
-### Calcul du score d'identité..................................................
-#...............................................................................
+
+### Calcul du score d'identité.......................................................................................................................
+#....................................................................................................................................................
 def perID ( seq1, seq2 ):
 
     """
@@ -53,8 +54,8 @@ def perID ( seq1, seq2 ):
 
     return (nb_id/taille_min)
 
-### Création d'une matrice .....................................................
-#...............................................................................
+### Création d'une matrice ..........................................................................................................................
+#....................................................................................................................................................
 def CreateMatrix( liste, Colonne_voulu, Ligne_voulu ) :
     """
         input : une liste de score d'identité, le nb de colonne et de ligne
@@ -81,8 +82,8 @@ def CreateMatrix( liste, Colonne_voulu, Ligne_voulu ) :
 
     return Matrice
 
-### Création de la matrice de similarité........................................
-#...............................................................................
+### Création de la matrice de similarité.............................................................................................................
+#....................................................................................................................................................
 def MatriceSim( liSeqAli, file):
     """
         input : une liste de tuple (nom / seq) et un fichier fasta
@@ -91,41 +92,43 @@ def MatriceSim( liSeqAli, file):
     Ligne_voulu = ut.nbrSeq(file)
     Colonne_voulu = ut.nbrSeq(file)
 
-    #print("=====> ", Colonne_voulu, " file : ", file  )
-
     liste=[]
     for i in range(len(liSeqAli)):
         name1, seq1 = liSeqAli[i]
         for j in range(len(liSeqAli)):
             name2, seq2  = liSeqAli[j]
             #calcul du score d'identité
-            pID = perID(seq1, seq2)
+            pID = 1 - perID(seq1, seq2)
             liste.append(pID)
 
-    print(liste)
     #Création matrice sim
     Matrice = CreateMatrix(liste, Colonne_voulu, Ligne_voulu)
 
 
     return Matrice
 
+#####################################################################################################################################################
+#                                                             POUR LE CLUSTERING 
+#####################################################################################################################################################
 
-### Création d'une matrice avec les identifiants de séquence....................
-#...............................................................................
-def CreateMatrixIdSeq(file) :
+### Fonction clustering .............................................................................................................................
+#....................................................................................................................................................
+def Clustering( matrice_id, dist):
     """
-        input : un fichier Fasta
-        output : une matrice contenant les identifiants des séquences
+        input : une matrice contenant les identifiants des séquences
+        output : une liste de numéro de cluster
     """
 
-    liste_seq = ut.listeSeqID(file)
-    matrix = np.array(liste_seq)
+    #J'ai mis average parce que Hugo (mon tuteur) a dit que c'était plus adapté
+    clustering = AgglomerativeClustering(n_clusters = None, distance_threshold=dist, affinity='precomputed', linkage="average").fit(matrice_id)
+    cluster = clustering.labels_
 
-    return matrix
+
+    return cluster
 
 
-### Création d'un dico avec les cluster.........................................
-#...............................................................................
+### Création d'un dico avec les cluster..............................................................................................................
+#....................................................................................................................................................
 def create_dico_cluster( liste_cluster, listeTuple ):
     """
         input : une matrice contenant les identifiants des séquences, une liste
@@ -134,7 +137,7 @@ def create_dico_cluster( liste_cluster, listeTuple ):
     """
 
     #Dico séquence :
-    comptage = 0
+
     dico_cluster = {}
 
     for i in range( len( listeTuple ) ) :
@@ -151,7 +154,6 @@ def create_dico_cluster( liste_cluster, listeTuple ):
         except IndexError as err:
             print("IndexError in Dico_Cluster : ", i )
 
-        comptage += 1
 
     return dico_cluster
 

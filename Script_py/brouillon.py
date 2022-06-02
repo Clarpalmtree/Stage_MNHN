@@ -931,3 +931,289 @@ def dicoFreqCoupleAA( liSeqAli, dico_occ_cluster, dico_aa_final ):
     #print(tab_couple)
 
 """
+
+"""
+### Fonction de distance pour le clustering .............................................
+#........................................................................................
+def distance_iD( id_seq1, id_seq2 ):
+    
+        input : deux id issu de deux séquences d'un alignment multiple
+                d'un fichier Fasta
+        output : une distance basé sur la similarité entre les séquences
+    
+
+    #a partir des indices on recupère les séquences correspondantes pour utiliser
+    #la fonction perID
+    try :
+        ID = SIM.perID(liSeqAli[int(id_seq1[0])][1], liSeqAli[int(id_seq2[0])][1])
+    except IndexError as err:
+        print("IndexError liSeqAli[", int ( id_seq1[0] ), "][1] liSeqAli[",
+                int ( id_seq2[0] ), "][1] , len : " , len( liSeqAli ) )
+
+
+    return 1 - ID
+
+
+### Création d'une matrice avec les identifiants de séquence.........................................................................................
+#....................................................................................................................................................
+def CreateMatrixIdSeq(file) :
+    
+        input : un fichier Fasta
+        output : une matrice contenant les identifiants des séquences
+    
+
+    liste_seq = ut.listeSeqID(file)
+    matrix = np.array(liste_seq)
+
+    return matrix
+
+
+        somme_all = 0
+    for aa1 in dFreqCouple :
+        for aa2 in dFreqCouple[aa1]  :
+        
+
+            if (aa1 in dAmbigu and aa2 in liste_aa) and (dFreqCouple[aa1][aa2] != 0.0) : 
+                for aa in dAmbigu[aa1]['tab'] :
+                    dFreqCouple[aa][aa2] += dFreqCouple[aa1][aa2] * dAmbigu[aa1]['valeur']
+                   
+
+                somme_all += dFreqCouple[aa1][aa2]
+
+            if (aa2 in dAmbigu and aa1 in liste_aa) and (dFreqCouple[aa1][aa2] != 0.0):
+                for aa in dAmbigu[aa2]['tab'] :
+                    
+                    dFreqCouple[aa1][aa] += dFreqCouple[aa1][aa2] * dAmbigu[aa2]['valeur']
+                  
+
+                somme_all += dFreqCouple[aa1][aa2]
+
+            if (aa1 in dAmbigu and aa2 in dAmbigu) and (dFreqCouple[aa1][aa2] != 0.0) :
+                for (ele1, ele2) in zip(dAmbigu[aa1]['tab'], dAmbigu[aa2]['tab']) :
+                    dFreqCouple[ele1][ele2] += dFreqCouple[aa1][aa2] * dAmbigu[aa1]['valeur'] * dAmbigu[aa2]['valeur']
+                    
+                
+                somme_all += dFreqCouple[aa1][aa2]
+                    
+
+            if (aa1 in liste_aa and aa2 in liste_aa) and (dFreqCouple[aa1][aa2] != 0.0):
+             
+                somme_all += dFreqCouple[aa1][aa2]
+                
+"""
+
+    """
+    # Après avoir redispatché je supprime les aa ambigu de mon dico
+    [dFreqCouple.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
+    for ele in dFreqCouple:
+        [dFreqCouple[ele].pop(key, None) for key in ['X', 'Z', 'J', 'B']]
+
+    # Enfin je calcule la freq des aa 
+    for aa1 in dFreqCouple :
+        for aa2 in dFreqCouple[aa1] :
+            if somme_all !=0 : 
+                dFreqCouple[aa1][aa2] = dFreqCouple[aa1][aa2] / somme_all
+                dFreqAA[aa1][aa2] += dFreqCouple[aa1][aa2]
+    
+    """
+        
+    return dFreqAA, tab_couple
+
+
+
+
+### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
+#....................................................................................................................................................
+def FreqSimple(dicoCouple):
+
+    dFreqSimple= {}
+    for aa in liste_aa :
+        dFreqSimple[aa]= 0
+    
+
+    for a in dicoCouple :
+        for aa in dicoCouple[a] :
+            #Pair identique :
+            if a == aa :
+                dFreqSimple[a] += dicoCouple[a][aa]
+
+            #Pair non identique
+            else :
+                dFreqSimple[a] += dicoCouple[a][aa] / 2
+                dFreqSimple[a] += dicoCouple[aa][a] / 2
+
+
+    return dFreqSimple
+
+
+
+### FONCTION QUI RENVOIE UN DICO DES FRÉQUENCES D'AA DE TOUS LES FICHIERS CONTENUE DANS UN DOSSIER...................................................
+#....................................................................................................................................................
+def MultiFreqCouple(directory, main_path, dossier) :
+    """
+        input : le chemin dans lequel se trouve tous les fichiers dont on veut les fréquences
+        output : un dico de fréquence d'AA  : { A : 0, T : 0, D : 0, ...} et un tableau
+                contenant tous les couples 
+    """
+
+    dFreqCouple = {}
+    for aa1 in liste_aa:
+        dFreqCouple[aa1]= {}
+        for aa2 in liste_aa :
+            dFreqCouple[aa1][aa2] = 0
+
+    tab_couple = []
+    tot = 0
+    for files in directory :
+        seq = readFastaMul(files)
+        dFreqCouple, tab_couple= FreqCouple(dFreqCouple, seq, tab_couple)
+        tot +=1
+
+
+    for aa1 in dFreqCouple :
+        for aa2 in dFreqCouple[aa1] :
+            
+            #je divise par le nombre de fichier
+            dFreqCouple[aa1][aa2] = dFreqCouple[aa1][aa2] /tot
+
+    path_folder_Result = main_path + dossier + "result"
+    path_freqCouple = f"{path_folder_Result}/PFASUM_freq_AA"
+    np.save(path_freqCouple, dFreqCouple) 
+
+    return dFreqCouple, tab_couple
+
+
+
+
+### FONCTION CALCULE DES FRÉQUENCES DES PAIRS D'AA...................................................................................................
+#....................................................................................................................................................
+def peij(dFreqSimple , tab) :
+    """
+        input : une liste de tuple (nom, seq) et un dico vide
+        output : un dico de la fréquence des pairs d'AA de la forme : 
+                { 'A' : {A: 0, T : 0, D : 0}, 'T' : {A : 0, T : 0, D : 0}, 'D' : {A : 0, T : 0, D : 0}, ...}
+    """
+
+
+    dFreqCouple = {}
+    for aa in liste_aa :
+        dFreqCouple[aa]={}
+        for aaa in liste_aa :
+            dFreqCouple[aa][aaa] = 0
+
+
+    #on supprime les doublons dans la liste
+    #sinon je vais compter plusieurs fois le même couple
+  
+    #cette partie va sans doute être modifié car elle peut s'écrire juste ainsi
+    """
+    for couple in tab_couple :
+        dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] = 2*( dFreqSimple [ couple["aa1"] ] * dFreqSimple[ couple["aa2"] ] )
+
+    """
+    #cependant si j'ai un couple AT, je voulais que son inverse TA puisse être présent dans mon dico
+    #et pas juste faire 2* qlqch
+    # en effet si je fait 2* ça revient au même cependant dans mon dico j'aurai juste
+    # la valeur de AT*2 (il prend en compte TA) mais mon couple TA sera égal à 0
+    # {A : {T: 2, C:0}, T: {A :0, C:0}}
+    #mais moi je le veux ainsi : {A : {T: 1, C:0}, T: {A :1, C:0}}
+    #donc je fais le code ci-dessous
+    tab_couple = []
+    for couple in tab:
+        if couple not in tab_couple : 
+            if couple["aa1"] ==  couple["aa2"] :
+                dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] = 2*( dFreqSimple [ couple["aa1"] ] * dFreqSimple[ couple["aa2"] ] )
+                tab_couple.append(couple)
+
+            else : 
+                dFreqCouple[ couple["aa1"] ][ couple["aa2"] ] =  dFreqSimple [ couple["aa1"] ] * dFreqSimple[ couple["aa2"] ] 
+                dFreqCouple[ couple["aa2"] ][ couple["aa1"] ] =  dFreqSimple [ couple["aa1"] ] * dFreqSimple[ couple["aa2"] ] 
+                tab_couple.append(couple)
+
+    #si je ne fais pas ça ma matrice ne va pas faire prendre en compte TA 
+    # et je trouve ça bizarre
+    # même si ça doit revenir au même
+
+
+
+    return dFreqCouple
+
+
+### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
+#....................................................................................................................................................
+def computeMatrixPFASUM(peij, freqPairs, scaling_factor, main_path, dossier):
+    """ input : 1 dico des fréquences des acides aminés + 1 dico des fréquences des pairs d'aa
+        output : une matrice
+    """
+    mat = {}
+    for aa1 in liste_aa:
+        mat[aa1] = {}
+        for aa2 in liste_aa:
+            if freqPairs[aa1][aa2] != 0:
+                #application de la formule de l'article Amino acid substitution matrices
+                #from protein blocks
+                mat[aa1][aa2] = round(
+                    scaling_factor*log2(freqPairs[aa1][aa2]/peij[aa1][aa2]))
+            else:
+                mat[aa1][aa2] = 0
+    #df_mat = pd.DataFrame.from_dict(mat)
+
+    path_folder_Result = main_path + dossier + "result"
+    path_matrix = f"{path_folder_Result}/PFASUM_score"
+    np.save(path_matrix, mat) 
+
+
+    return mat
+
+
+
+
+###TEST CALCULE FREQUENCE  PAIR AA ..................................................................................................................
+#....................................................................................................................................................
+
+
+#il faut juste changer le main_path normalement pour tester ici les fonctions
+
+main_path = "/home/ctoussaint"
+dossier = "/Stage_MNHN/test/"
+cluster60 = "/fichiers_cluster60"
+path_clust60 = main_path + cluster60
+
+
+directory = main_path + dossier + "multi"
+directory = Path(directory)
+directory = directory.iterdir()
+
+t = Timer()
+t.start()
+
+
+dFreqCouple, tab = MultiFreqCouple(directory, main_path, dossier)
+dicoFeqSimple = FreqSimple(dFreqCouple)
+Peij = peij(dicoFeqSimple, tab)
+
+
+#j'attribue un scaling factor de 2 puisque dans l'article 
+# Amino acid substitution matrices from protein blocks
+# "Lod ratios are multiplied by a scaling factor of 2"
+matrix = computeMatrixPFASUM(Peij, dFreqCouple, 2, main_path, dossier)
+
+
+
+###Tracer la heatmap.................................................................................................................................
+#....................................................................................................................................................
+
+path_folder = main_path + dossier + "result"
+titre = "PFASUM_TEST"
+heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
+heatmap = sb.heatmap(heatmap_matrix, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+plt.yticks(rotation=0) 
+heatmap_figure = heatmap.get_figure()    
+plt.title(titre)
+plt.close()
+path_save_fig = f"{path_folder}/{titre}.png"
+heatmap_figure.savefig(path_save_fig, dpi=400)
+
+t.stop("Fin construction Matrice")
+
+

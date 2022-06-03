@@ -16,13 +16,13 @@ if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
     path_main_folder =  "/home/ctoussaint"
-    name_folder_cluster= "Cluster_test"
-    name_folder_fasta = "test"
+    name_folder_cluster= "Cluster"
+    name_folder_fasta = "Pfam_fasta"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
     #% d'identité
-    perID = 0.60
+    perID = 0.31
 
     #On multiplie par 100 pour écrire dans le nom des fichiers et dossier
     #et on convertit en string

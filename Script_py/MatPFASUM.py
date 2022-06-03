@@ -63,15 +63,18 @@ def FreqCouple( dFreqAA, liSeqAli ):
                                 dFreqCouple[tab_index[aa1_], tab_index[aa2_]] += poids_aa1_aa2
                                 dFreqCouple[tab_index[aa2_], tab_index[aa1_]] += poids_aa1_aa2
                                 
-    
+                                
+
 
     # Enfin je calcule la freq des aa 
+    
+    print(dFreqCouple)
     somme = np.sum(dFreqCouple)
     for l in range(len(dFreqCouple)) :
         for col in range(len(dFreqCouple))  :
             dFreqCouple[l][col] = dFreqCouple[l][col] / somme
             dFreqAA[l][col] += dFreqCouple[l][col]
-      
+    
     #print("dFreqCouple", dFreqCouple, "\n")
     #print("somme freq : ", np.sum(dFreqCouple), "\n")    
     #print("dFreqAA", dFreqAA, "\n")
@@ -82,40 +85,22 @@ def FreqCouple( dFreqAA, liSeqAli ):
 #....................................................................................................................................................
 def FreqSimple(matCouple):
 
-    #H: optimisation avec dFreqSimple[a_index] = (1/2)*(np.sum(dFreqDouble[a_index,:]) + dFreqDouble[a_index,a_index])
-
+    #H: optimisation avec dFreqSimple[a_index] = (1/2)*(np.sum(dFreqDouble[a_index,:]) + dFreqDouble[a_index,a_index]) 
     
-
     dFreqSimple= []
     
     for a_index in range(20):
         #trop bizarre
-        dFreqSimple.append(((1/2)*( (np.sum(matCouple[a_index, :]) + matCouple[a_index,a_index]))))
+        #dFreqSimple.append(((1/2)*( (np.sum(matCouple[a_index, :]) + matCouple[a_index,a_index]))))
+        dFreqSimple.append(np.sum(matCouple[a_index, :]))
 
-    print("freq simple", np.sum(dFreqSimple), "\n")
+
+    #print("freq simple", np.sum(dFreqSimple), "\n")
+    #print(dFreqSimple)
+    
 
     return dFreqSimple
     
-    """
-    dFreqSimple= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    
-
-    for l in range(len(matCouple)):
-        for col in range(len(matCouple)) :
-            #Pair identique :
-            if l == col :
-                dFreqSimple[l] += matCouple[l, col]
-
-            #Pair non identique
-            else :
-                dFreqSimple[l] += matCouple[l , col] / 2
-                dFreqSimple[l] += matCouple[col , l] / 2
-    
-
-    print("freq simple", np.sum(dFreqSimple), "\n")
-
-    return dFreqSimple
-    """
 
 
 ### FONCTION QUI RENVOIE UN DICO DES FRÉQUENCES D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER...................................................
@@ -135,12 +120,12 @@ def MultiFreqCouple(directory) :
         dFreqCouple = FreqCouple(dFreqCouple, seq )
         tot +=1
 
-    print("nb file :", tot, "\n")
+    #print("nb file :", tot, "\n")
     for l in range(20) :
         for col in range(20) :
             dFreqCouple[l][col] = dFreqCouple[l][col] /tot
 
-    print("somme multi freq couple", np.sum(dFreqCouple), "\n")
+    #print("somme multi freq couple", np.sum(dFreqCouple), "\n")
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
     path_freqCouple = f"{path_folder_Result}/PFASUM_freq_AA"
@@ -165,23 +150,10 @@ def peij(dFreqSimple) :
 
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
+ 
     
-
-    """
-    mateij = np.zeros((20,20))
-    
-    for l in range(20):
-        for col in range(20):
-            
-            mateij[ l ][ col ] = 2*( dFreqSimple [ l ] * dFreqSimple[ col ] )
-
-           
-    for a in range(len(mateij)) :
-        mateij[a,a] = dFreqSimple[a]*dFreqSimple[a]
-
-    """
-    
-    print("somme peij", np.sum(peij), "\n")
+    #print("somme peij", np.sum(peij), "\n")
+    #print(peij)
     
     return peij
 

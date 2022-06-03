@@ -1000,9 +1000,9 @@ def CreateMatrixIdSeq(file) :
              
                 somme_all += dFreqCouple[aa1][aa2]
                 
-"""
 
-    """
+
+
     # Après avoir redispatché je supprime les aa ambigu de mon dico
     [dFreqCouple.pop(key, None) for key in ['X', 'Z', 'J', 'B']]
     for ele in dFreqCouple:
@@ -1015,10 +1015,10 @@ def CreateMatrixIdSeq(file) :
                 dFreqCouple[aa1][aa2] = dFreqCouple[aa1][aa2] / somme_all
                 dFreqAA[aa1][aa2] += dFreqCouple[aa1][aa2]
     
-    """
+    
         
-    return dFreqAA, tab_couple
-
+    #return dFreqAA, tab_couple
+    """
 
 
 
@@ -1215,5 +1215,55 @@ path_save_fig = f"{path_folder}/{titre}.png"
 heatmap_figure.savefig(path_save_fig, dpi=400)
 
 t.stop("Fin construction Matrice")
+
+
+###FILE SIMILARITE PERID 
+
+            #condition pour les aa ambigu (je pense que je peux le faire en plus optimisé
+            #mais là mon cerveau est au bout du rouleau)
+"""
+            if ((aa1 == 'B') and (aa2 == 'B' or aa2 == 'N' or aa2== 'D')):
+                nb_id +=1
+            if ((aa1 == 'B' or aa1 == 'N' or aa1 == 'D') and (aa2 == 'B')):
+                nb_id +=1
+            if ((aa1 == 'J') and (aa2 == 'J' or aa2 == 'E' or aa2== 'Q')):
+                nb_id+=1
+            if ((aa1== 'J' or aa1 == 'E' or aa1== 'Q') and (aa2=='J')):
+                nb_id+=1
+            if ((aa1 == 'Z') and (aa2 == 'Z' or aa2 == 'I' or aa2== 'L')):
+                nb_id+=1
+            if ((aa1 == 'Z' or aa1 == 'I' or aa1== 'L') and (aa2=='Z')):
+                nb_id+=1
+            if (aa1 == 'X') or (aa2 =='X'):
+                nb_id+=1
+                        
+
+            if seq1 == seq2 :
+                return 1
+
+            #condition normale, classique sans aa ambigu on va dire
+            if aa1 == aa2:
+                nb_id+= 1
+
+
+
+                for aa1_ in d_acides_amines[aa1] :
+                for aa2_ in d_acides_amines[aa2] :
+                    if aa1_ == aa2_ :
+                        print(aa1_)
+                        print(aa2_)
+                        nb_id +=1
+
+            if seq1 == seq2 :
+                return 1
+"""
+
+for aa1_ in d_acides_amines[aa1] :
+                for aa2_ in d_acides_amines[aa2] :
+                    if aa1_ == aa2_ :
+                        nb_id +=1 * (1/len(d_acides_amines[aa2]))
+
+            if seq1 == seq2 :
+                return 1
 
 

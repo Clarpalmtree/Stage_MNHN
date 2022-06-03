@@ -16,8 +16,8 @@ if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
     path_main_folder =  "/home/ctoussaint"
-    name_folder_cluster= "Cluster"
-    name_folder_fasta = "Pfam_fasta"
+    name_folder_cluster= "Cluster_test"
+    name_folder_fasta = "test"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
@@ -48,39 +48,40 @@ if __name__ == '__main__':
         accession_num = file_name_fasta.name.split(".")[0] + '.' + file_name_fasta.name.split(".")[1]
         file_name_cluster = accession_num + "_Cluster" + dist + ".fasta"
 
-        file_name_cluster = path_folder_cluster + file_name_cluster
+        file_name_cluster =  path_folder_cluster + file_name_cluster 
         #Plus la distance est petite plu nos séquence sont proche
         #si l'utilisateur donne 0.60 on donnera à distance_threshold = 0.40
         distance = 1-perID
 
         #Creation du dico_cluster à partir du clustering
         #dico_cluster = {0 : [{name : ' ', seq: ' ' }], 1 : [{name:' ', seq : ' '}]}
-        #on utilise la liste de numero de cluster renvoyé par Agglomerative
-        #construire le dico
         liSeqAli = rf.readFastaMul(file_name_fasta)
         matrice = SIM.MatriceSim(liSeqAli, file_name_fasta)
 
         if len(matrice) > 1 : 
-            liste_cluster = SIM.Clustering(matrice,distance)
-            dico_cluster = SIM.create_dico_cluster( liste_cluster, liSeqAli )
-            #print(dico_cluster)
+            #on utilise la liste de numero de cluster renvoyé par Agglomerative
+            liste_cluster = list(SIM.Clustering(matrice,distance))
+            
+            file_cluster = open(file_name_cluster, "w")
+            
+            for i in range( len( liSeqAli ) ) :
 
-            #Création des fichiers à partir du dico_cluster
-            file_name_cluster = open(file_name_cluster, "w")
+                name, seq = liSeqAli[i]
 
-            for cle in dico_cluster:
+                num_cluster = liste_cluster[i]
                 
-                count = len( dico_cluster[cle])
-                ligne = '>'+ str(cle) + " " + str(count) + " "
+                compt = liste_cluster.count(liste_cluster[i])
+                ligne = '>'+ str(num_cluster) + " " + str(compt) + " "
+                
 
                 result_text = ""
-                for d in dico_cluster[cle]:
-                    # > <num_cluster> <nb_seq> name_seq
-                    name = ligne + d['name'] + "\n"
-                    seq = d['seq'] + "\n"
-                    result_text += name + seq
+                
+                # > <num_cluster> <nb_seq> name_seq
+                name_seq = ligne + name + "\n"
+                sequence = seq + "\n"
+                result_text += name_seq + sequence
 
-                file_name_cluster.write(result_text)
+                file_cluster.write(result_text)
 
     t.stop("Time to cluster")
         

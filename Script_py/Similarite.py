@@ -6,6 +6,16 @@ from readFasta import readFastaMul
 liste_aa_ambi= ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K',
                 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'J', 'Z', 'X']
 
+liste_aa_ambigu = ['X', 'Z', 'J', 'B', 'A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G',
+                   'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
+
+
+d_acides_amines = {'Z':['I', 'L'], 'J' :['Q' , 'E'] , 'B' : ['N', 'D'] , 'X' :['A', 'E', 
+                   'D', 'R', 'N','C', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 
+                   'W', 'Y', 'V'], 'A' : ['A'], 'E' : ['E'], 'D' : ['D'], 'R' : ['R'], 'N' : ['N'], 
+                   'C' : ['C'], 'Q' : ['Q'], 'G' : ['G'], 'H' : ['H'], 'I' : ['I'], 'L' : ['L'], 
+                   'K' : ['K'], 'M' : ['M'], 'F' : ['F'], 'P' : ['P'], 'S' : ['S'], 'T' : ['T'], 
+                   'W' : ['W'], 'Y' : ['Y'], 'V' : ['V'] }
 
 ### Calcul du score d'identité.......................................................................................................................
 #....................................................................................................................................................
@@ -21,10 +31,11 @@ def perID ( seq1, seq2 ):
 
     #récupération de la séquence la plus petite
     taille_min= min(ut.tailleSeqssGap(seq1), ut.tailleSeqssGap(seq2))
-
+    
     for (aa1, aa2) in zip(seq1, seq2):
         if aa1 in liste_aa_ambi and aa2 in liste_aa_ambi:
-
+            
+            
             #condition pour les aa ambigu (je sais que je peux le faire en plsu optimisé
             #mais là mon cerveau est a bout du rouleau)
             if ((aa1 == 'B') and (aa2 == 'B' or aa2 == 'N' or aa2== 'D')):
@@ -49,6 +60,7 @@ def perID ( seq1, seq2 ):
             if aa1 == aa2:
                 nb_id+= 1
 
+           
     if taille_min == 0 :
         return 0
 
@@ -100,6 +112,7 @@ def MatriceSim( liSeqAli, file):
             #calcul du score d'identité
             pID = 1 - perID(seq1, seq2)
             liste.append(pID)
+    #print(liste)
 
     #Création matrice sim
     Matrice = CreateMatrix(liste, Colonne_voulu, Ligne_voulu)
@@ -125,36 +138,3 @@ def Clustering( matrice_id, dist):
 
 
     return cluster
-
-
-### Création d'un dico avec les cluster..............................................................................................................
-#....................................................................................................................................................
-def create_dico_cluster( liste_cluster, listeTuple ):
-    """
-        input : une matrice contenant les identifiants des séquences, une liste
-                de tuple ( nom / seq ) et une distance pour clusterisé
-        output : un dico contenant le nom et les séquences par cluster
-    """
-
-    #Dico séquence :
-
-    dico_cluster = {}
-
-    for i in range( len( listeTuple ) ) :
-
-        name, seq = listeTuple[i]
-
-        i = liste_cluster[i]
-
-        if not i in dico_cluster.keys():
-            dico_cluster[i] = []
-
-        try :
-            dico_cluster[i].append( { "name": name, "seq": seq } )
-        except IndexError as err:
-            print("IndexError in Dico_Cluster : ", i )
-
-
-    return dico_cluster
-
-

@@ -12,6 +12,7 @@ from timer import Timer
 ################       CREATION DES FICHIERS CLUSTER      ######################
 
 ################################################################################
+
 if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
@@ -22,7 +23,7 @@ if __name__ == '__main__':
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
     #% d'identité
-    perID = 0.31
+    perID = 0.43
 
     #On multiplie par 100 pour écrire dans le nom des fichiers et dossier
     #et on convertit en string

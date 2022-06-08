@@ -2,6 +2,9 @@ import numpy as np
 import utils as ut
 from sklearn.cluster import AgglomerativeClustering
 from readFasta import readFastaMul
+import pandas as pd
+import seaborn as sb
+import matplotlib.pyplot as plt
 
 liste_aa_ambi= ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K',
                 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'J', 'Z', 'X']
@@ -112,13 +115,27 @@ def MatriceSim( liSeqAli, file):
             #calcul du score d'identité
             pID = 1 - perID(seq1, seq2)
             liste.append(pID)
-    #print(liste)
-
     #Création matrice sim
     Matrice = CreateMatrix(liste, Colonne_voulu, Ligne_voulu)
 
 
     return Matrice
+
+def heatmap(titre, matrix, path_folder):
+    """
+        input : titre du heatmap, matrice et le chemin pour stocker notre heatmap
+        outpu : un heatmap de la matrice de substitution PFASUM selon le %id
+    """
+
+    heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
+    heatmap = sb.heatmap(heatmap_matrix,  annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+    plt.yticks(rotation=0) 
+    heatmap_figure = heatmap.get_figure()    
+    plt.title(titre)
+    plt.close()
+    path_save_fig = f"{path_folder}/{titre}.png"
+    heatmap_figure.savefig(path_save_fig, dpi=400)
+
 
 #####################################################################################################################################################
 #                                                             POUR LE CLUSTERING 
@@ -138,3 +155,12 @@ def Clustering( matrice_id, dist):
 
 
     return cluster
+
+### Calcul et AFFICHAGE DE LA MATRICE DE DISTANCE....................................................................................................
+#....................................................................................................................................................
+file = "/home/ctoussaint/Pfam_fasta/PF00016.23.fasta"
+path_folder = "/home/ctoussaint/Stage_MNHN/test/result"
+titre = "Matrice de Distance PF00016.23.fasta"
+liSeqAli = readFastaMul(file)
+matrice = MatriceSim(liSeqAli, file)
+heatmap(titre, matrice, path_folder )

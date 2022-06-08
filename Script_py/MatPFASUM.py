@@ -68,36 +68,37 @@ def FreqCouple( dFreqAA, liSeqAli ):
 
     # Enfin je calcule la freq des aa 
     
-    print(dFreqCouple)
     somme = np.sum(dFreqCouple)
     for l in range(len(dFreqCouple)) :
         for col in range(len(dFreqCouple))  :
-            dFreqCouple[l][col] = dFreqCouple[l][col] / somme
-            dFreqAA[l][col] += dFreqCouple[l][col]
+            if somme != 0 :
+                dFreqCouple[l][col] = dFreqCouple[l][col] / somme
+                dFreqAA[l][col] += dFreqCouple[l][col]
     
-    #print("dFreqCouple", dFreqCouple, "\n")
-    #print("somme freq : ", np.sum(dFreqCouple), "\n")    
-    #print("dFreqAA", dFreqAA, "\n")
+
     return dFreqAA
 
 
 ### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
 #....................................................................................................................................................
 def FreqSimple(matCouple):
+    """
+        input : une matrice de fréquence 20x20 de nos couples d'aa
+        output : une matrice 1x20 de nos aa
+    """
 
     #H: optimisation avec dFreqSimple[a_index] = (1/2)*(np.sum(dFreqDouble[a_index,:]) + dFreqDouble[a_index,a_index]) 
     
     dFreqSimple= []
     
     for a_index in range(20):
-        #trop bizarre
         #dFreqSimple.append(((1/2)*( (np.sum(matCouple[a_index, :]) + matCouple[a_index,a_index]))))
         dFreqSimple.append(np.sum(matCouple[a_index, :]))
 
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple60"
+    np.save(path_freqSimple, dFreqSimple) 
 
-    #print("freq simple", np.sum(dFreqSimple), "\n")
-    #print(dFreqSimple)
-    
 
     return dFreqSimple
     
@@ -120,15 +121,12 @@ def MultiFreqCouple(directory) :
         dFreqCouple = FreqCouple(dFreqCouple, seq )
         tot +=1
 
-    #print("nb file :", tot, "\n")
     for l in range(20) :
         for col in range(20) :
             dFreqCouple[l][col] = dFreqCouple[l][col] /tot
 
-    #print("somme multi freq couple", np.sum(dFreqCouple), "\n")
-
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqCouple = f"{path_folder_Result}/PFASUM_freq_AA"
+    path_freqCouple = f"{path_folder_Result}/PFASUM_freqCouple60"
     np.save(path_freqCouple, dFreqCouple) 
 
     return dFreqCouple
@@ -150,10 +148,11 @@ def peij(dFreqSimple) :
 
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
- 
-    
-    #print("somme peij", np.sum(peij), "\n")
-    #print(peij)
+
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
+    path_eij = f"{path_folder_Result}/PFASUM_eij60"
+    np.save(path_eij, peij) 
+
     
     return peij
 
@@ -180,54 +179,72 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
     #df_mat = pd.DataFrame.from_dict(mat)
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_score"
+    path_matrix = f"{path_folder_Result}/PFASUM_score60"
     np.save(path_matrix, mat) 
-    #print(mat)
+    print(mat)
 
     return mat
-       
+
+
+###FONCTION Visualisation Matrice en DataFrame.......................................................................................................
+#....................................................................................................................................................
+def Visualisation(matrice):
+
+    df_mat = pd.DataFrame(matrice)
+
+    return df_mat
+
+
+###FONCTION heatmap..................................................................................................................................
+#....................................................................................................................................................
+def heatmap(titre, matrix, path_folder):
+    """
+        input : titre du heatmap, matrice et le chemin pour stocker notre heatmap
+        outpu : un heatmap de la matrice de substitution PFASUM selon le %id
+    """
+
+    x_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
+            'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for x-axis
+    y_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
+                'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for y-axis
+
+    heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
+    heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+    plt.yticks(rotation=0) 
+    heatmap_figure = heatmap.get_figure()    
+    plt.title(titre)
+    plt.close()
+    path_save_fig = f"{path_folder}/{titre}.png"
+    heatmap_figure.savefig(path_save_fig, dpi=400)
+
+
+
+### Variable Global pour calculer et stocker la matrice..............................................................................................
+#....................................................................................................................................................
 
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 
-directory = main_path + dossier + "multi"
+directory = main_path + "/Cluster60"
 directory = Path(directory)
 directory = directory.iterdir()
 
-t = Timer()
-t.start()
+titre = "PFASUM60"
+path_folder = main_path + dossier + "result"
+
 
 ### CALCUL MATRICE...................................................................................................................................
 #....................................................................................................................................................
+
+t = Timer()
+t.start()
 
 dFreqAA = np.zeros((20,20))
 mat_couple = MultiFreqCouple(directory)
 freqsimple = FreqSimple(mat_couple)
 Peij = peij(freqsimple)
 matrix = computeMatrixPFASUM(Peij, mat_couple, 2)
+print(Visualisation(matrix))
+heatmap(titre, matrix, path_folder)
 
-###Tracer le heatmap.................................................................................................................................
-#....................................................................................................................................................
-
-
-path_folder = main_path + dossier + "result_test"
-titre = "PFASUM_TEST"
-
-x_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
-            'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for x-axis
-y_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
-            'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for y-axis
-
-heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
-heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
-plt.yticks(rotation=0) 
-heatmap_figure = heatmap.get_figure()    
-plt.title("PFASUM_TEST")
-plt.close()
-path_save_fig = f"{path_folder}/{titre}.png"
-heatmap_figure.savefig(path_save_fig, dpi=400)
 t.stop("Fin construction Matrice PFASUM")
-
-
-
-

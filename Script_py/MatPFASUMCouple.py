@@ -23,32 +23,37 @@ d_acides_amines = {'Z': ['I', 'L'], 'J': ['Q', 'E'], 'B': ['N', 'D'], 'X': ['A',
                    'W': ['W'], 'Y': ['Y'], 'V': ['V']}
 
 
-indice = 0
+
+# Variable pour aider à la construction de la matrice
 tab_index = {}
 Tindice = {}
 tab_couple = []
 indiceAA = 0
+indice = 0
 
+# dico d'indice de nos pairs de couples d'acide aminé
+# + tableau des couples pour le heatmap (même si on voit rien mdr) 
 for aa in liste_aa:
-    Tindice[aa] = indiceAA
-    indiceAA +=1
     for aa2 in liste_aa:
         tab_index[(aa, aa2)] = indice
+        tab_couple.append((aa,aa2))
         indice += 1
-
 
 # ..................................................................................................................................................
 
 
-# FONCTION CALCULE DE FREQUENCE D'AA...............................................................................................................
+# FONCTION CALCULE DE FREQUENCE DE PAIR DE COUPLE D'AA................................................................................................
 # ....................................................................................................................................................
-def FreqCouple(dFreqPair, liSeqAli):
+def FreqPairCouple(dFreqPair, liSeqAli):
     """
-        input : une liste de tuple (seq, nom), un dico vide
-        output : un dico de la forme : { A : 0, T : 0, D : 0, ...}
+        input :  une matrice 400x400 vide et une liste de tuple (seq, nom)
+        output : une matrice 400x400: [ [<freq (('A', 'A')x('A', 'A'))>, <freq (('A', 'A')x('A', 'E'))>, 
+                                        <freq (('A', 'A')x('A', 'D'))>,  <freq (('A', 'A')x('A', 'R'))>, ... ], 
+                                        [<freq (('A', 'E')x ('A', 'A'))>, <freq (('A', 'E')x('A, 'E'))>, 
+                                        <freq (('A', 'E')x('A', 'D'))>,  <freq (('A', 'E')x('A', 'R'))>, ... ], 
+                                         ...]
     """
 
-    dFreqCouple = np.zeros((20, 20))
     dFreqPairCouple = np.zeros((400, 400))
 
     for i in range(len(liSeqAli)):
@@ -69,62 +74,67 @@ def FreqCouple(dFreqPair, liSeqAli):
                     aa1_couple2 = seq2[j]
                     aa2_couple2 = seq2[j+1]
                     
-                    if aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu:
+                    if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
+                        and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
                         for aa1_ in d_acides_amines[aa1_couple1]:
                             for aa2_ in d_acides_amines[aa2_couple1]:
                                 couple1 = (aa1_, aa2_)
-                                poids_aa1_aa2 = (1/len(d_acides_amines[aa1_couple1])) * (1 / taille_cluster1) * (1/len(d_acides_amines[aa1_couple2])) * (1/taille_cluster2)
-                                dFreqCouple[Tindice[aa1_], Tindice[aa2_]] += poids_aa1_aa2
-                                dFreqCouple[Tindice[aa2_], Tindice[aa1_]] += poids_aa1_aa2
                                 
+                                # prise en compte des acides aminés ambigu afin de les
+                                # "redispatcher"
                                 for aa3 in d_acides_amines[aa1_couple2]:
                                     for aa4 in d_acides_amines[aa2_couple2]:
                                         couple2 = (aa3, aa4)
-                                        poids_couples = (1/len(d_acides_amines[aa1_])) * (1 / taille_cluster1) * (1/len(d_acides_amines[aa3])) * (1/taille_cluster2) * (1/len(d_acides_amines[aa2_])) * (1 / taille_cluster1) * (1/len(d_acides_amines[aa4])) * (1/taille_cluster2)
+                                        poids_couples = ( (1/len(d_acides_amines[aa1_])) * (1 / taille_cluster1) 
+                                                        * (1/len(d_acides_amines[aa3])) * (1/taille_cluster2) 
+                                                        * (1/len(d_acides_amines[aa2_])) * (1 / taille_cluster1) 
+                                                        * (1/len(d_acides_amines[aa4])) * (1/taille_cluster2) )
                                         dFreqPairCouple[tab_index[couple1], tab_index[couple2]] += poids_couples
                                         dFreqPairCouple[tab_index[couple2], tab_index[couple1]] += poids_couples
 
-                                        ##pas sûr j'ai compté les couples dans tous les sens
+                                        # Cl : pas sûr pour ce qui est en commentaire en bas
+                                        #      j'ai compté les couples dans tous les sens 
+                                        #      soit (A,D)(A,G), (A,G)(A,D), (G,A)(D,A), (G,A)(A,D), ...
                                         """
-                                        dFreqCouple[tab_index[(aa2_, aa1_)], tab_index[(aa3, aa4)]]+= poids_couples
-                                        dFreqCouple[tab_index[(aa3, aa4)], tab_index[(aa2_, aa1_)]]+= poids_couples
-                                        dFreqCouple[tab_index[(aa1_, aa2_)], tab_index[(aa4, aa3)]]+= poids_couples
-                                        dFreqCouple[tab_index[(aa4, aa3)], tab_index[(aa1_, aa2_)] ]+= poids_couples
-                                        dFreqCouple[tab_index[(aa2_, aa1_)], tab_index[(aa4, aa3)]]+= poids_couples
-                                        dFreqCouple[tab_index[(aa4, aa3)], tab_index[(aa2_, aa1_)]]+= poids_couples
+                                        dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa3, aa4)]]+= poids_couples
+                                        dFreqPairCoupletab_index[(aa3, aa4)], tab_index[(aa2_, aa1_)]]+= poids_couples
+                                        dFreqPairCouple[tab_index[(aa1_, aa2_)], tab_index[(aa4, aa3)]]+= poids_couples
+                                        dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa1_, aa2_)] ]+= poids_couples
+                                        dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa4, aa3)]]+= poids_couples
+                                        dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa2_, aa1_)]]+= poids_couples
                                         """
 
 
-
-    # Enfin je calcule la freq des aa
+    # Enfin je calcule la freq des pairs de couples d'AA
     Spair = np.sum(dFreqPairCouple)
 
     for l in range(len(dFreqPairCouple)):
         for col in range(len(dFreqPairCouple)):
             if Spair != 0:
                 dFreqPairCouple[l][col] = dFreqPairCouple[l][col] / Spair
+                # ici j'ajoute dans la matrice qui va contenir 
+                # les freq contenues dans tous les fichiers du dossier
                 dFreqPair[l][col]+= dFreqPairCouple[l][col]
 
-    return dFreqPairCouple
+
+    return dFreqPair
 
 ### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
 #....................................................................................................................................................
 def FreqSimple(matCouple):
     """
-        input : une matrice de fréquence 20x20 de nos couples d'aa
-        output : une matrice 1x20 de nos aa
+        input : une matrice de fréquence 400x400 de nos couples d'aa
+        output : une matrice 1x400 de nos aa de la forme : 
+                [<freq ('A', 'A')>, <freq ('A', 'E')>, <freq ('A', 'D')>,  <freq ('A', 'R')>, ...]
     """
 
-    #H: optimisation avec dFreqSimple[a_index] = (1/2)*(np.sum(dFreqDouble[a_index,:]) + dFreqDouble[a_index,a_index]) 
-    
     dFreqSimple= []
     
     for a_index in range(400):
-        #dFreqSimple.append(((1/2)*( (np.sum(matCouple[a_index, :]) + matCouple[a_index,a_index]))))
         dFreqSimple.append(np.sum(matCouple[a_index, :]))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimpleTEST"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimplePCouple31"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -132,57 +142,58 @@ def FreqSimple(matCouple):
     
 
 
-### FONCTION QUI RENVOIE UN DICO DES FRÉQUENCES D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER...................................................
+### FONCTION QUI RENVOIE UNE MATRICE DES FRÉQUENCES DE PAIR DE COUPLE D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER.............................
 #....................................................................................................................................................
 def MultiFreqCouple(directory) :
     """
         input : le chemin dans lequel se trouve tous les fichiers dont on veut les fréquences
-        output : un dico de fréquence d'AA  : { A : 0, T : 0, D : 0, ...} et un tableau
-                contenant tous les couples 
+        output : une matrice 400x400 de toutes les fréquences de tous les seeds contenue dans le dossier
     """
 
-    dFreqCouplePair = np.zeros((400,400))
+    dFreqPairCouple = np.zeros((400,400))
     
     tot = 0
     for files in directory :
         seq = readFastaMul(files)
-        dFreqCouplePair = FreqCouple(dFreqCouplePair, seq )
+        #j'ajoute les fréquences dans mon tableau de tous les fichiers
+        dFreqPairCouple = FreqPairCouple(dFreqPairCouple, seq )
         tot +=1
 
     for l in range(400) :
         for col in range(400) :
-            dFreqCouplePair[l][col] = dFreqCouplePair[l][col] /tot
+            # je divise par le nombre de fichiers pour avoir la fréquence des couples
+            # sur l'ensemble des fichiers contenues dans le dossier
+            dFreqPairCouple[l][col] = dFreqPairCouple[l][col] /tot
 
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqCouple = f"{path_folder_Result}/PFASUM_freqCoupleTEST"
-    np.save(path_freqCouple, dFreqCouplePair) 
+    path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple31"
+    np.save(path_freqCouple, dFreqPairCouple) 
 
-    return dFreqCouplePair
+
+    return dFreqPairCouple
 
     
 
-### FONCTION CALCULE DES FRÉQUENCES DES PAIRS D'AA...................................................................................................
+### FONCTION CALCULE DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.........................................................................................
 #....................................................................................................................................................
 def peij(dFreqSimple) :
     """
-        input : une liste de tuple (nom, seq) et un dico vide
-        output : un dico de la fréquence des pairs d'AA de la forme : 
-                { 'A' : {A: 0, T : 0, D : 0}, 'T' : {A : 0, T : 0, D : 0}, 'D' : {A : 0, T : 0, D : 0}, ...}
+        input : un tableau de fréquence 1x400
+        output : une matrice 400x400 de la probabilité d'occurence attendue eij
     """
 
-    
     peij = np.outer(dFreqSimple, np.transpose(dFreqSimple))
    
-
+    #calcul pour la diagonale
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_eij = f"{path_folder_Result}/PFASUM_eijTEST"
+    path_eij = f"{path_folder_Result}/PFASUM_eijPCouple31"
     np.save(path_eij, peij) 
+ 
 
-    
     return peij
 
 
@@ -190,8 +201,10 @@ def peij(dFreqSimple) :
 ### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
 #....................................................................................................................................................
 def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
-    """ input : 1 dico des fréquences des acides aminés + 1 dico des fréquences des pairs d'aa
-        output : une matrice
+    """ 
+        input : matrice 400x400 contenant les eij, matrice 400x400 
+                de la fréquence des pair de couple et le scaling factor
+        output : une matrice de substitution 400x400
     """
 
     mat = np.zeros((400,400))
@@ -204,18 +217,16 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
                     scaling_factor*log2(freqPairs[l][col]/peij[l][col]))
             else:
                 mat[l][col] = 0
-    
-    #df_mat = pd.DataFrame.from_dict(mat)
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_scoreTest"
+    path_matrix = f"{path_folder_Result}/PFASUM_scorePCouple31"
     np.save(path_matrix, mat) 
-    #"print(mat)
+
 
     return mat
 
 
-###FONCTION Visualisation Matrice en DataFrame.......................................................................................................
+### FONCTION VISUALISATION D'UNE MATRICE EN DATAFRAME................................................................................................
 #....................................................................................................................................................
 def Visualisation(matrice):
 
@@ -224,7 +235,7 @@ def Visualisation(matrice):
     return df_mat
 
 
-###FONCTION heatmap..................................................................................................................................
+### FONCTION HEATMAP.................................................................................................................................
 #....................................................................................................................................................
 def heatmap(titre, matrix, path_folder):
     """
@@ -232,10 +243,8 @@ def heatmap(titre, matrix, path_folder):
         outpu : un heatmap de la matrice de substitution PFASUM selon le %id
     """
 
-    x_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
-            'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for x-axis
-    y_axis_labels = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
-                'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'] # labels for y-axis
+    x_axis_labels = tab_couple # labels for x-axis
+    y_axis_labels = tab_couple # labels for y-axis
 
     heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
     heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
@@ -248,17 +257,17 @@ def heatmap(titre, matrix, path_folder):
 
 
 
-### Variable Global pour calculer et stocker la matrice..............................................................................................
+### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
 #....................................................................................................................................................
 
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 
-directory = main_path + dossier + "multi"
+directory = main_path + "/Cluster31"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_testCouple"
+titre = "PFASUM_Couple31"
 path_folder = main_path + dossier + "result"
 
 
@@ -269,12 +278,14 @@ t = Timer()
 t.start()
 
 mat_pairCouple = MultiFreqCouple(directory)
-print(mat_pairCouple)
 freqsimple = FreqSimple(mat_pairCouple)
 Peij = peij(freqsimple)
-
+# je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
+# "Amino acid substitution matrice from protein blocks"
+# "Lod ratios are multiplied by a scaling factor of 2 ..."
 matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 2)
+print(matrix)
 print(Visualisation(matrix))
 heatmap(titre, matrix, path_folder)
 
-t.stop("Fin construction Matrice PFASUM")
+t.stop("Fin construction Matrice PFASUM Couple")

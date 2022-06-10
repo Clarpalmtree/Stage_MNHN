@@ -91,14 +91,5 @@ for a in pairwise2.align.globaldx("IDAAYRSTRGKEVYLFKGDQYARIDYETNSMVNKEIKSIRNGFPC
 print(perID("IDAAYRSTRGKEVYLF-KGDQYAR-IDY-E-TNSMVN-KEI--K-S-IRNGF-PC--", "IDAAYRSTRGKEVYLF-KGDQYARI-DYE--TNSMVN-KEI--K-S-IRNGF-PC---"))
 print(perID("INAAFRSSQNNEAYLFIN-DKYV-LLDYAPGT-S--NDK-VLYGPTPVRDGFKSLNQ", "INAAFRSSQNNEAYLFIN-DKYV-LLDYAPGT-S--NDK-VLYGPTPVRDGFKSLNQ"))
 
-print("----------------------------------------------------------------------")
-print("----------------------------------------------------------------------")
-print("----------------------------------------------------------------------")
-print("----------------------------------------------------------------------")
-main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/test/"
-
-titre = "PFASUM60"
-path_folder = main_path + dossier + "result"
 
 

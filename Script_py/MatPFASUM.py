@@ -102,7 +102,7 @@ def FreqSimple(matPair):
         dFreqSimple.append(np.sum(matPair[a_index, :]))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple60"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple31"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -134,7 +134,7 @@ def MultiFreqPair(directory) :
             dFreqPair[l][col] = dFreqPair[l][col] /tot
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair60"
+    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair31"
     np.save(path_freqPair, dFreqPair) 
 
 
@@ -159,7 +159,7 @@ def peij(dFreqSimple) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_eij = f"{path_folder_Result}/PFASUM_eij60"
+    path_eij = f"{path_folder_Result}/PFASUM_eij31"
     np.save(path_eij, peij) 
 
     
@@ -189,7 +189,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
     
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_score60"
+    path_matrix = f"{path_folder_Result}/PFASUM_score31"
     np.save(path_matrix, mat) 
     print(mat)
 
@@ -227,6 +227,18 @@ def heatmap(titre, matrix, path_folder):
     heatmap_figure.savefig(path_save_fig, dpi=400)
 
 
+def entropy(mat_pair, tab_lod_ratio):
+    """
+        input : matrice de pair d'AA et la matrice des lods ratios
+        output : entropie de la matrice de substitution
+    """
+    entropy=0
+    for i in range(len(mat_pair)):
+        for j in range(i):
+            entropy += mat_pair[i][j] * tab_lod_ratio[i][j]
+
+    return entropy
+
 
 ### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
 #....................................................................................................................................................
@@ -234,12 +246,12 @@ def heatmap(titre, matrix, path_folder):
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 
-directory = main_path + "/Cluster60"
+directory = main_path + "/Cluster31"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM60"
-path_folder = main_path + dossier + "result"
+titre = "PFASUUM31"
+path_folder = main_path + dossier + "result31"
 
 
 ### CALCUL MATRICE...................................................................................................................................
@@ -255,7 +267,10 @@ Peij = peij(freqsimple)
 # "Amino acid substitution matrice from protein blocks"
 # "Lod ratios are multiplied by a scaling factor of 2 ..."
 matrix = computeMatrixPFASUM(Peij, mat_pair, 2)
-print(Visualisation(matrix))
-heatmap(titre, matrix, path_folder)
+#print(Visualisation(matrix))
+#heatmap(titre, matrix, path_folder)
+print("PFASUM 31 ENTROPY : ")
+print(entropy(mat_pair, matrix))
 
-t.stop("Fin construction Matrice PFASUM")
+
+#t.stop("Fin construction Matrice PFASUM")

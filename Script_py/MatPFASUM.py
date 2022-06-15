@@ -1,11 +1,12 @@
 from math import log2
 import pandas as pd
 from readFasta import readFastaMul
-from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sb
 import numpy as np
-from timer import Timer
+
+# J'appelle mes fonctions dans le fichier :
+# Main_Pfasum.py
 
 ### VARIABLE GLOBAL..................................................................................................................................
 
@@ -218,7 +219,8 @@ def heatmap(titre, matrix, path_folder):
     y_axis_labels = liste_aa # labels for y-axis
 
     heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
-    heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+    heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, 
+                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu")
     plt.yticks(rotation=0) 
     heatmap_figure = heatmap.get_figure()    
     plt.title(titre)
@@ -227,50 +229,81 @@ def heatmap(titre, matrix, path_folder):
     heatmap_figure.savefig(path_save_fig, dpi=400)
 
 
-def entropy(mat_pair, tab_lod_ratio):
+
+
+### FONCTION qui renvoie l'entropie ("désordre") d'une matrice.......................................................................................
+#....................................................................................................................................................
+def entropy(id, path_folder_pair, path_folder_FS, path_folder_MS, path_file_pair, path_file_freqS, path_file_MS):
     """
         input : matrice de pair d'AA et la matrice des lods ratios
         output : entropie de la matrice de substitution
     """
-    entropy=0
+    file_pair = path_file_pair + str(id)
+    file_freq_simple = path_file_freqS + str(id)
+    file_MS = path_file_MS + str(id)
+
+    mat_pair = np.load(f"{path_folder_pair}/{file_pair}.npy", allow_pickle='TRUE')
+    freq_simple = np.load(f"{path_folder_FS}/{file_freq_simple}.npy", allow_pickle='TRUE') 
+    tab_lod_ratio = np.load(f"{path_folder_MS}/{file_MS}.npy", allow_pickle='TRUE') 
+    
+    relative_entropy=0
+    exp_score = 0
+
     for i in range(len(mat_pair)):
         for j in range(i):
-            entropy += mat_pair[i][j] * tab_lod_ratio[i][j]
+            relative_entropy += mat_pair[i][j] * tab_lod_ratio[i][j]
+            exp_score += (freq_simple[i] * freq_simple[j] * tab_lod_ratio[i][j])
 
-    return entropy
+    relative_entropy = round(relative_entropy, 3)
+    exp_score = round(exp_score, 3)
 
 
-### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
+    return relative_entropy, exp_score
+
+
+
+###FONCTION qui renvoie la distance entre deux matrice...............................................................................................
 #....................................................................................................................................................
+def matrix_difference(matrix1, matrix2):
+    """
+        input : matrices avec les lesquelles on veut la distance
+        output : distance
+    """
 
-main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/test/"
+    # initialisation
+    matrix_diff = np.zeros((20,20))
+    average_diff = 0
+    count = 0
 
-directory = main_path + "/Cluster31"
-directory = Path(directory)
-directory = directory.iterdir()
+    # evaluation of the differences
+    for i in range(len(matrix1)):
+        for j in range(len(matrix1)):
+            matrix_diff[i][j] = matrix1[i][j] - matrix2[i][j]
+            average_diff += matrix_diff[i][j]
+            count += 1
 
-titre = "PFASUUM31"
-path_folder = main_path + dossier + "result31"
+    average_diff = round(average_diff/count, 2)
+
+    return matrix_diff, average_diff 
 
 
-### CALCUL MATRICE...................................................................................................................................
+###FONCTION qui renvoie le nb de cluster dans les fichiers contenues dans un dossier.................................................................
 #....................................................................................................................................................
+def nb_Cluster(path_folder_Cluster) : 
 
-t = Timer()
-t.start()
+    
+    count_Cluster = 0
 
-mat_pair = MultiFreqPair(directory)
-freqsimple = FreqSimple(mat_pair)
-Peij = peij(freqsimple)
-# je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
-# "Amino acid substitution matrice from protein blocks"
-# "Lod ratios are multiplied by a scaling factor of 2 ..."
-matrix = computeMatrixPFASUM(Peij, mat_pair, 2)
-#print(Visualisation(matrix))
-#heatmap(titre, matrix, path_folder)
-print("PFASUM 31 ENTROPY : ")
-print(entropy(mat_pair, matrix))
+    for file in path_folder_Cluster :
+        nb_Cluster = []
+        liSeqAli = readFastaMul(file)
+        for i in range(len(liSeqAli)):
+            name, seq = liSeqAli[i]
+            cluster_nb = int ( name.split()[0] )
+            if not cluster_nb in nb_Cluster :
+                nb_Cluster.append(cluster_nb)
 
+        count_Cluster += len(nb_Cluster)
 
-#t.stop("Fin construction Matrice PFASUM")
+    return count_Cluster
+            

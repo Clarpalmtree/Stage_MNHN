@@ -1,45 +1,8 @@
+from importlib.resources import path
 import MatPFASUM as MS 
 from pathlib import Path
 import numpy as np
 from timer import Timer
-
-### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
-#....................................................................................................................................................
-
-main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/test/"
-
-# Tu pourras trouver les fichiers par seuil d'identité ici
-
-directory31 = main_path + dossier + "file_Cluster31"
-directory31 = Path(directory31)
-directory31 = directory31.iterdir()
-
-directory43 = main_path + dossier + "file_Cluster43"
-directory43 = Path(directory43)
-directory43 = directory43.iterdir()
-
-directory60 = main_path + dossier + "file_Cluster60"
-directory60 = Path(directory60)
-directory60 = directory60.iterdir()
-
-
-titre = "PFASUM60"
-path_folder = main_path + dossier + "result"
-path_freqPair = path_folder + "/Resultat_PairAA/freqPair"
-path_freqSP = path_folder + "/Resultat_PairAA/freqSimple"
-path_MS = path_folder + "/Resultat_PairAA/Mat_substitution"
-name_file_pair = "/PFASUM_freqPair"
-name_file_FS = "/PFASUM_freqSimple"
-name_file_MS = "/PFASUM_"
-
-file_pfasum60 = path_MS + name_file_MS + str(60) + ".npy"
-file_pfasum43 = path_MS + name_file_MS + str(43) + ".npy"
-file_pfasum31 = path_MS + name_file_MS + str(31) + ".npy"
-
-Ma_pfasum60 = np.load(file_pfasum60, allow_pickle= 'TRUE')
-Ma_pfasum43 = np.load(file_pfasum43, allow_pickle= 'TRUE')
-Ma_pfasum31 = np.load(file_pfasum31, allow_pickle= 'TRUE')
 
 #Matrices de l'article PFASUM 
 
@@ -110,17 +73,41 @@ pfasum43 = [[   4,  -1,  -1,  -1,  -1,   0,   0,  0, -2, -1, -1, -1,  0, -2, -1,
 
 
 
+### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
+#....................................................................................................................................................
 
+main_path = "/home/ctoussaint"
+dossier = "/Stage_MNHN/"
+
+# Tu pourras trouver les fichiers par seuil d'identité ici
+titre = "test_PFASUM31"
+path_folder = main_path + dossier + "result"
+
+directory = main_path + dossier + "test/test_result_cluster31"
+directory = Path(directory)
+directory = directory.iterdir()
+
+
+directory31 = main_path + dossier + "file_Cluster31"
+directory31 = Path(directory31)
+directory31 = directory31.iterdir()
+
+directory43 = main_path + dossier + "file_Cluster43"
+directory43 = Path(directory43)
+directory43 = directory43.iterdir()
+
+directory60 = main_path + dossier + "file_Cluster60"
+directory60 = Path(directory60)
+directory60 = directory60.iterdir()
 
 ### CALCUL MATRICE...................................................................................................................................
 #....................................................................................................................................................
 
 
-"""
 t = Timer()
 t.start()
 
-mat_pair = MS.MultiFreqPair(directory31)
+mat_pair = MS.MultiFreqPair(directory)
 freqsimple = MS.FreqSimple(mat_pair)
 Peij = MS.peij(freqsimple)
 # je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
@@ -128,38 +115,67 @@ Peij = MS.peij(freqsimple)
 # "Lod ratios are multiplied by a scaling factor of 2 ..."
 matrix = MS.computeMatrixPFASUM(Peij, mat_pair, 2)
 #print(MS.Visualisation(matrix))
-#MS.heatmap(titre, matrix, path_folder)
-print("PFASUM 31 ENTROPY : ")
+MS.heatmap(titre, matrix, path_folder)
+t.stop("Fin construction Matrice PFASUM")
 
-#t.stop("Fin construction Matrice PFASUM")
 
-"""
+
+
+path_freqPair = path_folder + "/Resultat_PairAA/freqPair"
+path_freqSP = path_folder + "/Resultat_PairAA/freqSimple"
+path_MS = path_folder + "/Resultat_PairAA/Mat_substitution"
+name_file_pair = "/TEST_PFASUM_freqPair"
+name_file_FS = "/TEST_PFASUM_freqSimple"
+name_file_MS = "/TEST_PFASUM_"
+
+
+file_couple60 = "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple60.npy"
+file_couple31=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple31.npy"
+file_couple43=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple43.npy"
+
+file_pfasum60 = path_MS + name_file_MS + str(80) + ".npy"
+file_pfasum43 = path_MS + name_file_MS + str(50) + ".npy"
+file_pfasum31 = path_MS + name_file_MS + str(11) + ".npy"
+
+Ma_pfasum60 = np.load(file_pfasum60, allow_pickle= 'TRUE')
+Ma_pfasum43 = np.load(file_pfasum43, allow_pickle= 'TRUE')
+Ma_pfasum31 = np.load(file_pfasum31, allow_pickle= 'TRUE')
+
+
+pfasumCouple60 = np.load(file_couple60, allow_pickle= 'TRUE')
+print(pfasumCouple60)
+print("\n")
+pfasumCouple43 = np.load(file_couple43, allow_pickle= 'TRUE')
+print(pfasumCouple43)
+print("\n")
+pfasumCouple31 = np.load(file_couple31, allow_pickle= 'TRUE')
+print(pfasumCouple31)
 
 ### CALCUL ENTROPIE + difference entre Matrice.......................................................................................................
 #....................................................................................................................................................
 
-"""
-Entropie_relative60, exp_score60 = MS.entropy(60, path_freqPair, path_freqSP, path_MS, name_file_pair,
+
+Entropie_relative60, exp_score60 = MS.entropy(80, path_freqPair, path_freqSP, path_MS, name_file_pair,
                                       name_file_FS, name_file_MS)
 
-print("Entropie Relative à 60% : ", Entropie_relative60)
-print("expected score à 60% :" , exp_score60)
+print("Entropie Relative à 80% : ", Entropie_relative60)
+print("expected score à 80% :" , exp_score60)
 
 print("\n")
 
-Entropie_relative43, exp_score43 = MS.entropy(43, path_freqPair, path_freqSP, path_MS, name_file_pair,
+Entropie_relative43, exp_score43 = MS.entropy(50, path_freqPair, path_freqSP, path_MS, name_file_pair,
                                       name_file_FS, name_file_MS)
 
-print("Entropie Relative à 43% : ", Entropie_relative43)
-print("expected score à 43% :" , exp_score43)
+print("Entropie Relative à 50% : ", Entropie_relative43)
+print("expected score à 50% :" , exp_score43)
 
 print("\n")
 
-Entropie_relative31, exp_score31 = MS.entropy(31, path_freqPair, path_freqSP, path_MS, name_file_pair,
+Entropie_relative31, exp_score31 = MS.entropy(11, path_freqPair, path_freqSP, path_MS, name_file_pair,
                                       name_file_FS, name_file_MS)
 
-print("Entropie Relative à 31% : ", Entropie_relative31)
-print("expected score à 31% :" , exp_score31)
+print("Entropie Relative à 11% : ", Entropie_relative31)
+print("expected score à 11% :" , exp_score31)
 
 
 matrix_diff60, dist60 =MS.matrix_difference(Ma_pfasum60, pfasum60 )
@@ -167,16 +183,26 @@ matrix_diff31, dist31 =MS.matrix_difference(Ma_pfasum31, pfasum31 )
 matrix_diff43, dist43 =MS.matrix_difference(Ma_pfasum43, pfasum43 )
 
 
-print("distance entre pfasum60 :", dist60)
-print("distance entre pfasum31 :", dist31)
-print("distance entre pfasum43 :", dist43)
+print("distance entre test_pfasum60 :", dist60)
+print("distance entre test_pfasum31 :", dist31)
+print("distance entre test_pfasum43 :", dist43)
+
+path_folder_heatmap= path_folder +"/heatmap"
+
+MS.heatmap("TEST-Dist MA PFASUM - PFASUM60", matrix_diff60, path_folder)
+MS.heatmap("TEST-Dist MA PFASUM - PFASUM31", matrix_diff31, path_folder)
+MS.heatmap("TEST-Dist MA PFASUM - PFASUM43", matrix_diff43, path_folder)
+
+MS.heatmap("TEST_PFASUM_60", Ma_pfasum60, path_folder_heatmap)
+MS.heatmap("TEST_PFASUM_43", Ma_pfasum43, path_folder_heatmap)
+MS.heatmap("TEST_PFASUM_31", Ma_pfasum31, path_folder_heatmap)
+#print("Nb_de cluster dans le fichier à 31% : ", MS.nb_Cluster(directory31) )
+#print("Nb_de cluster dans le fichier à 43% : ", MS.nb_Cluster(directory43) )
+#print("Nb_de cluster dans le fichier à 60% : ", MS.nb_Cluster(directory60) ) 
 
 
-MS.heatmap("Dist MA PFASUM - PFASUM60", matrix_diff60, path_folder)
-MS.heatmap("Dist MA PFASUM - PFASUM31", matrix_diff31, path_folder)
-MS.heatmap("Dist MA PFASUM - PFASUM43", matrix_diff43, path_folder)
-"""
 
-print("Nb_de cluster dans le fichier à 31% : ", MS.nb_Cluster(directory31) )
-print("Nb_de cluster dans le fichier à 43% : ", MS.nb_Cluster(directory43) )
-print("Nb_de cluster dans le fichier à 60% : ", MS.nb_Cluster(directory60) ) 
+
+
+
+

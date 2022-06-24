@@ -1,8 +1,8 @@
-import os, shutil
 from pathlib import Path
 import readFasta as rf
 import Similarite as SIM
 from timer import Timer
+import os, shutil
 
 
 
@@ -16,25 +16,27 @@ from timer import Timer
 if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
-    path_main_folder =  "/home/ctoussaint"
-    name_folder_cluster= "Cluster"
-    name_folder_fasta = "Pfam_fasta"
+    path_main_folder =  "/home/ctoussaint/Stage_MNHN/test/"
+    name_folder_cluster= "test_result_cluster"
+    name_folder_fasta = "test_cluster"
     path_folder_cluster= path_main_folder + "/" + name_folder_cluster
     path_folder_fasta = path_main_folder + "/" + name_folder_fasta
 
     #% d'identité
-    perID = 0.43
+    perID = 0.80
 
     #On multiplie par 100 pour écrire dans le nom des fichiers et dossier
     #et on convertit en string
     dist = perID*100
     dist = str(int(dist))
 
+    
     #Création du dossier qui va contenir les fichiers Cluster
     path_folder_cluster = path_folder_cluster + dist +'/'
     if os.path.isdir(path_folder_cluster):
         shutil.rmtree(path_folder_cluster)
     os.mkdir(path_folder_cluster)
+    
 
     #On itère dans le dossier contenant les fichiers fasta à convertir
     path_fasta = Path(path_folder_fasta + '/')

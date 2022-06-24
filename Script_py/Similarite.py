@@ -155,12 +155,3 @@ def Clustering( matrice_id, dist):
 
 
     return cluster
-
-### Calcul et AFFICHAGE DE LA MATRICE DE DISTANCE....................................................................................................
-#....................................................................................................................................................
-file = "/home/ctoussaint/Pfam_fasta/PF00016.23.fasta"
-path_folder = "/home/ctoussaint/Stage_MNHN/test/result"
-titre = "Matrice de Distance PF00016.23.fasta"
-liSeqAli = readFastaMul(file)
-matrice = MatriceSim(liSeqAli, file)
-heatmap(titre, matrice, path_folder )

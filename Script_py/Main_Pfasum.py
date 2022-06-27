@@ -88,15 +88,15 @@ directory = Path(directory)
 directory = directory.iterdir()
 
 
-directory31 = main_path + dossier + "file_Cluster31"
+directory31 = main_path  + "/Cluster31"
 directory31 = Path(directory31)
 directory31 = directory31.iterdir()
 
-directory43 = main_path + dossier + "file_Cluster43"
+directory43 = main_path + "/Cluster43"
 directory43 = Path(directory43)
 directory43 = directory43.iterdir()
 
-directory60 = main_path + dossier + "file_Cluster60"
+directory60 = main_path + "/Cluster60"
 directory60 = Path(directory60)
 directory60 = directory60.iterdir()
 
@@ -196,9 +196,7 @@ MS.heatmap("TEST-Dist MA PFASUM - PFASUM43", matrix_diff43, path_folder)
 MS.heatmap("TEST_PFASUM_60", Ma_pfasum60, path_folder_heatmap)
 MS.heatmap("TEST_PFASUM_43", Ma_pfasum43, path_folder_heatmap)
 MS.heatmap("TEST_PFASUM_31", Ma_pfasum31, path_folder_heatmap)
-#print("Nb_de cluster dans le fichier à 31% : ", MS.nb_Cluster(directory31) )
-#print("Nb_de cluster dans le fichier à 43% : ", MS.nb_Cluster(directory43) )
-#print("Nb_de cluster dans le fichier à 60% : ", MS.nb_Cluster(directory60) ) 
+
 
 
 

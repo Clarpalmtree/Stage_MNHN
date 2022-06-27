@@ -77,14 +77,14 @@ def FreqPair( dFreqPairAA, liSeqAli ):
 
     # Enfin je calcule la freq des aa 
 
-    somme = np.sum(dFreqPair) /2
+    somme = (1/2)*(np.sum(dFreqPair) + np.trace(dFreqPair))
     for l in range(len(dFreqPair)) :
         for col in range(len(dFreqPair))  :
-        
-            dFreqPair[l][col] = dFreqPair[l][col] / somme
-            # ici j'ajoute dans la matrice qui va contenir 
-            # les freq contenues dans tous les fichiers du dossier
-            dFreqPairAA[l][col] += dFreqPair[l][col]
+            if somme !=0 :
+                dFreqPair[l][col] = dFreqPair[l][col] / somme
+                # ici j'ajoute dans la matrice qui va contenir 
+                # les freq contenues dans tous les fichiers du dossier
+                dFreqPairAA[l][col] += dFreqPair[l][col]
     
     
     return dFreqPairAA
@@ -105,7 +105,7 @@ def FreqSimple(matPair):
         dFreqSimple.append((1/2)*(np.sum(matPair[a_index, :])+(matPair[a_index, a_index])))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple60_new"
+    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimple31"
     np.save(path_freqSimple, dFreqSimple) 
 
     print("somme freq simple", np.sum(dFreqSimple))
@@ -138,7 +138,7 @@ def MultiFreqPair(directory) :
             dFreqPair[l][col] = dFreqPair[l][col] /tot
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair60_new"
+    path_freqPair = f"{path_folder_Result}/new_PFASUM_freqPair31"
     np.save(path_freqPair, dFreqPair) 
     print("somme pair =", np.sum(dFreqPair))
 
@@ -164,7 +164,7 @@ def peij(dFreqSimple) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_eij = f"{path_folder_Result}/PFASUM_eij60_new"
+    path_eij = f"{path_folder_Result}/new_PFASUM_eij31"
     np.save(path_eij, peij) 
     print(np.sum(peij))
 
@@ -195,7 +195,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
     
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_60_new"
+    path_matrix = f"{path_folder_Result}/new_PFASUM_31"
     np.save(path_matrix, mat) 
     #print(mat)
 
@@ -238,24 +238,17 @@ def heatmap(titre, matrix, path_folder):
 
 ### FONCTION qui renvoie l'entropie ("désordre") d'une matrice.......................................................................................
 #....................................................................................................................................................
-def entropy(id, path_folder_pair, path_folder_FS, path_folder_MS, path_file_pair, path_file_freqS, path_file_MS):
+def entropy(mat_pair, tab_lod_ratio, freq_simple):
     """
         input : matrice de pair d'AA et la matrice des lods ratios
         output : entropie de la matrice de substitution
     """
-    file_pair = path_file_pair + str(id)
-    file_freq_simple = path_file_freqS + str(id)
-    file_MS = path_file_MS + str(id)
-
-    mat_pair = np.load(f"{path_folder_pair}/{file_pair}.npy", allow_pickle='TRUE')
-    freq_simple = np.load(f"{path_folder_FS}/{file_freq_simple}.npy", allow_pickle='TRUE') 
-    tab_lod_ratio = np.load(f"{path_folder_MS}/{file_MS}.npy", allow_pickle='TRUE') 
     
     relative_entropy=0
     exp_score = 0
 
     for i in range(len(mat_pair)):
-        for j in range(i):
+        for j in range(i+1):
             relative_entropy += mat_pair[i][j] * tab_lod_ratio[i][j]
             exp_score += (freq_simple[i] * freq_simple[j] * tab_lod_ratio[i][j])
 
@@ -312,32 +305,3 @@ def nb_Cluster(path_folder_Cluster) :
 
     return count_Cluster
 
-
-### CALCUL MATRICE...................................................................................................................................
-#....................................................................................................................................................
-
-
-main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/"
-
-# Tu pourras trouver les fichiers par seuil d'identité ici
-titre = "TEST_PFASUM60_correction"
-path_folder = main_path + dossier + "result"
-
-directory = main_path + dossier + "test/multi"
-directory = Path(directory)
-directory = directory.iterdir()
-
-t = Timer()
-t.start()
-
-mat_pair = MultiFreqPair(directory)
-freqsimple = FreqSimple(mat_pair)
-Peij = peij(freqsimple)
-# je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
-# "Amino acid substitution matrice from protein blocks"
-# "Lod ratios are multiplied by a scaling factor of 2 ..."
-matrix = computeMatrixPFASUM(Peij, mat_pair, 2)
-#print(MS.Visualisation(matrix))
-heatmap(titre, matrix, path_folder)
-t.stop("Fin construction Matrice PFASUM")

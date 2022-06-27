@@ -106,7 +106,7 @@ def FreqPairCouple(dFreqPair, liSeqAli):
 
 
     # Enfin je calcule la freq des pairs de couples d'AA
-    Spair = np.sum(dFreqPairCouple)
+    Spair = (1/2)*(np.sum(dFreqPairCouple) + np.trace(dFreqPairCouple))
 
     for l in range(len(dFreqPairCouple)):
         for col in range(len(dFreqPairCouple)):
@@ -131,10 +131,10 @@ def FreqSimple(matCouple):
     dFreqSimple= []
     
     for a_index in range(400):
-        dFreqSimple.append(np.sum(matCouple[a_index, :]))
+        dFreqSimple.append((1/2)*(np.sum(matCouple[a_index, :])+(matCouple[a_index, a_index])))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimplePCouple31"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimplePCouple60"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -167,7 +167,7 @@ def MultiFreqCouple(directory) :
 
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple31"
+    path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple60"
     np.save(path_freqCouple, dFreqPairCouple) 
 
 
@@ -183,14 +183,14 @@ def peij(dFreqSimple) :
         output : une matrice 400x400 de la probabilité d'occurence attendue eij
     """
 
-    peij = np.outer(dFreqSimple, np.transpose(dFreqSimple))
+    peij = 2*np.outer(dFreqSimple, np.transpose(dFreqSimple))
    
     #calcul pour la diagonale
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_eij = f"{path_folder_Result}/PFASUM_eijPCouple31"
+    path_eij = f"{path_folder_Result}/PFASUM_eijPCouple60"
     np.save(path_eij, peij) 
  
 
@@ -219,7 +219,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
                 mat[l][col] = 0
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_scorePCouple31"
+    path_matrix = f"{path_folder_Result}/PFASUM_scorePCouple60"
     np.save(path_matrix, mat) 
 
 
@@ -263,11 +263,11 @@ def heatmap(titre, matrix, path_folder):
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/test/"
 
-directory = main_path + "/Cluster31"
+directory = main_path + "/Cluster60"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_Couple31"
+titre = "PFASUM_Pair60"
 path_folder = main_path + dossier + "result"
 
 

@@ -142,10 +142,8 @@ Ma_pfasum31 = np.load(file_pfasum31, allow_pickle= 'TRUE')
 
 pfasumCouple60 = np.load(file_couple60, allow_pickle= 'TRUE')
 print(pfasumCouple60)
-print("\n")
 pfasumCouple43 = np.load(file_couple43, allow_pickle= 'TRUE')
 print(pfasumCouple43)
-print("\n")
 pfasumCouple31 = np.load(file_couple31, allow_pickle= 'TRUE')
 print(pfasumCouple31)
 

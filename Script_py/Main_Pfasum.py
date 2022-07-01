@@ -4,7 +4,8 @@ from pathlib import Path
 import numpy as np
 from timer import Timer
 
-#Matrices de l'article PFASUM 
+#Matrices de l'article PFASUM............................................................................................;
+#.........................................................................................................................
 
 pfasum60 = [[ 5, -1, -2, -1, -2,  0, -1,  0, -2, -1, -1, -1, -1, -2, -1,  1,  0, -3, -3,  0],
                 [-1,  6,  3,  0,  0, -5,  2,  0,  0, -5, -4,  1, -3, -5, -1,  0, -1, -5, -3, -4],
@@ -82,10 +83,6 @@ dossier = "/Stage_MNHN/"
 titre = "PFASUM31_new"
 path_folder = main_path + dossier + "result"
 
-directory = main_path + dossier + "test/test_result_cluster31"
-directory = Path(directory)
-directory = directory.iterdir()
-
 
 directory31 = main_path  + "/Cluster31"
 directory31 = Path(directory31)
@@ -130,13 +127,12 @@ pfasumCouple31 = np.load(file_couple31, allow_pickle= 'TRUE')
 t = Timer()
 t.start()
 
-Peij = np.load("/home/ctoussaint/Stage_MNHN/result/new_PFASUM_eij31.npy", allow_pickle= 'TRUE')
-
-mat_pair = np.load(file_pair, allow_pickle= 'TRUE')
-
+mat_pair = MS.MultiFreqPair(directory60)
+freqsimple = MS.FreqSimple(mat_pair)
+Peij = MS.peij(freqsimple)
 matrix = MS.computeMatrixPFASUM(Peij, mat_pair, 1)
-#print(MS.Visualisation(matrix))
 MS.heatmap(titre, matrix, path_folder)
+
 t.stop("Fin construction Matrice PFASUM")
 
 # Distance moyenne ..........................................................................................................

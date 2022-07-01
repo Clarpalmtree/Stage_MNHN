@@ -174,9 +174,3 @@ MS.heatmap("Matrice de distance entre ma PFASUM43 et celle de l'article", matrix
 MS.heatmap("PFASUM60", Ma_pfasum60, path_folder_heatmap)
 MS.heatmap("PFASUM43", Ma_pfasum43, path_folder_heatmap)
 MS.heatmap("PFASUM31", Ma_pfasum31, path_folder_heatmap)
-
-
-
-
-
-

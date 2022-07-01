@@ -134,9 +134,6 @@ Peij = np.load("/home/ctoussaint/Stage_MNHN/result/new_PFASUM_eij31.npy", allow_
 
 mat_pair = np.load(file_pair, allow_pickle= 'TRUE')
 
-# je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
-# "Amino acid substitution matrice from protein blocks"
-# "Lod ratios are multiplied by a scaling factor of 2 ..."
 matrix = MS.computeMatrixPFASUM(Peij, mat_pair, 1)
 #print(MS.Visualisation(matrix))
 MS.heatmap(titre, matrix, path_folder)

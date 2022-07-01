@@ -107,9 +107,25 @@ name_file_FS = "/new_PFASUM_freqSimple"
 name_file_MS = "/PFASUM_NEW_"
 file_pair = path_freqPair + name_file_pair + str(31) + ".npy"
 
+file_couple60 = "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple60.npy"
+file_couple31=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple31.npy"
+file_couple43=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple43.npy"
+
+file_pfasum60 = path_MS + name_file_MS + str(60) + ".npy"
+file_pfasum43 = path_MS + name_file_MS + str(43) + ".npy"
+file_pfasum31 = path_MS + name_file_MS + str(31) + ".npy"
+
+Ma_pfasum60 = np.load(file_pfasum60, allow_pickle= 'TRUE')
+Ma_pfasum43 = np.load(file_pfasum43, allow_pickle= 'TRUE')
+Ma_pfasum31 = np.load(file_pfasum31, allow_pickle= 'TRUE')
+
+pfasumCouple60 = np.load(file_couple60, allow_pickle= 'TRUE')
+pfasumCouple43 = np.load(file_couple43, allow_pickle= 'TRUE')
+pfasumCouple31 = np.load(file_couple31, allow_pickle= 'TRUE')
+
+
 ### CALCUL MATRICE...................................................................................................................................
 #....................................................................................................................................................
-
 
 t = Timer()
 t.start()
@@ -126,34 +142,12 @@ matrix = MS.computeMatrixPFASUM(Peij, mat_pair, 1)
 MS.heatmap(titre, matrix, path_folder)
 t.stop("Fin construction Matrice PFASUM")
 
+# Distance moyenne ..........................................................................................................
+#............................................................................................................................
 
-
-file_couple60 = "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple60.npy"
-file_couple31=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple31.npy"
-file_couple43=  "/home/ctoussaint/Stage_MNHN/result/Resultat_PCoupleAA/Mat_substitutionPCouple/PFASUM_scorePCouple43.npy"
-
-file_pfasum60 = path_MS + name_file_MS + str(60) + ".npy"
-file_pfasum43 = path_MS + name_file_MS + str(43) + ".npy"
-file_pfasum31 = path_MS + name_file_MS + str(31) + ".npy"
-
-Ma_pfasum60 = np.load(file_pfasum60, allow_pickle= 'TRUE')
-Ma_pfasum43 = np.load(file_pfasum43, allow_pickle= 'TRUE')
-Ma_pfasum31 = np.load(file_pfasum31, allow_pickle= 'TRUE')
-
-pfasumCouple60 = np.load(file_couple60, allow_pickle= 'TRUE')
-print(pfasumCouple60)
-pfasumCouple43 = np.load(file_couple43, allow_pickle= 'TRUE')
-print(pfasumCouple43)
-pfasumCouple31 = np.load(file_couple31, allow_pickle= 'TRUE')
-print(pfasumCouple31)
-
-### CALCUL ENTROPIE + difference entre Matrice.......................................................................................................
-#....................................................................................................................................................
-
-matrix_diff60, dist60 =MS.matrix_difference(Ma_pfasum60, pfasum60 )
-matrix_diff31, dist31 =MS.matrix_difference(Ma_pfasum31, pfasum31 )
-matrix_diff43, dist43 =MS.matrix_difference(Ma_pfasum43, pfasum43 )
-
+matrix_diff60, dist60 = MS.matrix_difference(Ma_pfasum60, pfasum60 )
+matrix_diff31, dist31 = MS.matrix_difference(Ma_pfasum31, pfasum31 )
+matrix_diff43, dist43 = MS.matrix_difference(Ma_pfasum43, pfasum43 )
 
 print("distance entre pfasum60 :", dist60)
 print("distance entre pfasum31 :", dist31)
@@ -161,13 +155,13 @@ print("distance entre pfasum43 :", dist43)
 
 path_folder_heatmap= path_folder +"/heatmap"
 
-#Heatmap des matrices de distance ............................................................................................
+#Heatmap des matrices de distance.............................................................................................
 #.............................................................................................................................
 MS.heatmap("Matrice de distance entre ma PFASUM60 et celle de l'article", matrix_diff60, path_folder)
 MS.heatmap("Matrice de distance entre ma PFASUM31 et celle de l'article", matrix_diff31, path_folder)
 MS.heatmap("Matrice de distance entre ma PFASUM43 et celle de l'article", matrix_diff43, path_folder)
 
-#Heatmap des matrices construites ............................................................................................
+#Heatmap des matrices construites.............................................................................................
 #.............................................................................................................................
 MS.heatmap("PFASUM60", Ma_pfasum60, path_folder_heatmap)
 MS.heatmap("PFASUM43", Ma_pfasum43, path_folder_heatmap)

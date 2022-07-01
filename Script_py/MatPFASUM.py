@@ -337,5 +337,3 @@ def nb_Cluster(path_folder_Cluster) :
         count_Cluster += len(nb_Cluster)
 
     return count_Cluster
-
-    

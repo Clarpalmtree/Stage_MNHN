@@ -105,7 +105,7 @@ def FreqSimple(matPair):
         dFreqSimple.append((1/2)*(np.sum(matPair[a_index, :])+(matPair[a_index, a_index])))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimple31"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple31"
     np.save(path_freqSimple, dFreqSimple) 
 
     print("somme freq simple", np.sum(dFreqSimple))
@@ -138,7 +138,7 @@ def MultiFreqPair(directory) :
             dFreqPair[l][col] = dFreqPair[l][col] /tot
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqPair = f"{path_folder_Result}/new_PFASUM_freqPair31"
+    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair31"
     np.save(path_freqPair, dFreqPair) 
     print("somme pair =", np.sum(dFreqPair))
 
@@ -164,7 +164,7 @@ def peij(dFreqSimple) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_eij = f"{path_folder_Result}/new_PFASUM_eij31"
+    path_eij = f"{path_folder_Result}/PFASUM_eij31"
     np.save(path_eij, peij) 
     print(np.sum(peij))
 
@@ -172,6 +172,48 @@ def peij(dFreqSimple) :
     return peij
 
 
+### FONCTION CALCULE DES FRÉQUENCES ATTENDUES DES PAIRS D'AA.........................................................................................
+#....................................................................................................................................................
+def peij_bis(dFreqSimple) :
+    """
+        input : un tableau de fréquence 1x20
+        output : une matrice 20x20 de la probabilité d'occurence attendue eij
+    
+    """
+
+    
+    peij = np.outer(dFreqSimple, np.transpose(dFreqSimple))
+
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_eij = f"{path_folder_Result}/PFASUM_eij60"
+    np.save(path_eij, peij) 
+    print(np.sum(peij))
+
+    
+    return peij
+
+
+def FreqSimple_bis(matPair):
+    """
+        input : une matrice de fréquence 20x20 de nos couples d'aa
+        output : une matrice 1x20 de nos aa de la forme :
+                [ <freq('A')> , <freq('E')>, <freq('D')>, <freq('R')>, ... ]
+    """
+
+    dFreqSimple= []
+    
+    for a_index in range(20):
+        dFreqSimple.append((np.sum(matPair[a_index, :])))
+
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple60"
+    np.save(path_freqSimple, dFreqSimple) 
+
+    print("somme freq simple", np.sum(dFreqSimple))
+
+    return dFreqSimple
+
+    
 
 ### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
 #....................................................................................................................................................
@@ -195,21 +237,12 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
     
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_matrix = f"{path_folder_Result}/new_PFASUM_31"
+    path_matrix = f"{path_folder_Result}/PFASUM_NEW_"
     np.save(path_matrix, mat) 
     #print(mat)
 
 
     return mat
-
-
-### FONCTION VISUALISATION D'UNE MATRICE EN DATAFRAME................................................................................................
-#....................................................................................................................................................
-def Visualisation(matrice):
-
-    df_mat = pd.DataFrame(matrice)
-
-    return df_mat
 
 
 ### FONCTION HEATMAP.................................................................................................................................
@@ -225,7 +258,7 @@ def heatmap(titre, matrix, path_folder):
 
     heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
     heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, 
-                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu")
+                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu", vmin = -10, vmax = 5)
     plt.yticks(rotation=0) 
     heatmap_figure = heatmap.get_figure()    
     plt.title(titre)
@@ -304,4 +337,3 @@ def nb_Cluster(path_folder_Cluster) :
         count_Cluster += len(nb_Cluster)
 
     return count_Cluster
-

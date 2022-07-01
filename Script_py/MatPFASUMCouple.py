@@ -133,8 +133,8 @@ def FreqSimple(matCouple):
     for a_index in range(400):
         dFreqSimple.append((1/2)*(np.sum(matCouple[a_index, :])+(matCouple[a_index, a_index])))
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimplePCouple60"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimplePCouple31"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -166,15 +166,15 @@ def MultiFreqCouple(directory) :
             dFreqPairCouple[l][col] = dFreqPairCouple[l][col] /tot
 
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple60"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_freqCouple = f"{path_folder_Result}/new_PFASUM_freqPCouple31"
     np.save(path_freqCouple, dFreqPairCouple) 
 
 
     return dFreqPairCouple
 
     
-
+43
 ### FONCTION CALCULE DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.........................................................................................
 #....................................................................................................................................................
 def peij(dFreqSimple) :
@@ -189,8 +189,8 @@ def peij(dFreqSimple) :
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_eij = f"{path_folder_Result}/PFASUM_eijPCouple60"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_eij = f"{path_folder_Result}/new_PFASUM_eijPCouple31"
     np.save(path_eij, peij) 
  
 
@@ -218,8 +218,8 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
             else:
                 mat[l][col] = 0
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/test/result"
-    path_matrix = f"{path_folder_Result}/PFASUM_scorePCouple60"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
+    path_matrix = f"{path_folder_Result}/new_PFASUM_scorePCouple31"
     np.save(path_matrix, mat) 
 
 
@@ -261,13 +261,13 @@ def heatmap(titre, matrix, path_folder):
 #....................................................................................................................................................
 
 main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/test/"
+dossier = "/Stage_MNHN/"
 
-directory = main_path + "/Cluster60"
+directory = main_path + "/Cluster31"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_Pair60"
+titre = "PFASUM_Pair31"
 path_folder = main_path + dossier + "result"
 
 
@@ -283,7 +283,7 @@ Peij = peij(freqsimple)
 # je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
 # "Amino acid substitution matrice from protein blocks"
 # "Lod ratios are multiplied by a scaling factor of 2 ..."
-matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 2)
+matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
 print(matrix)
 print(Visualisation(matrix))
 heatmap(titre, matrix, path_folder)

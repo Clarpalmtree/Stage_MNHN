@@ -68,53 +68,52 @@ def FreqPairCouple(dFreqPair, liSeqAli):
 
             # on calcule les pairs entre les clusters
             if cluster_name_2 != cluster_name_1:
-                for (i, j) in zip(range(len(seq1)-1), range(len(seq2)-1)):
-                    aa1_couple1 = seq1[i]
-                    aa2_couple1 = seq1[i+1]
-                    aa1_couple2 = seq2[j]
-                    aa2_couple2 = seq2[j+1]
+                for (k,m) in zip(range(len(seq1)-1), range(len(seq2)-1)):
+                    for (l,n) in zip(range(len(seq1)-1), range(len(seq2)-1)):
+                        aa1_couple1 = seq1[k]
+                        aa2_couple1 = seq1[l+1]
+                        aa1_couple2 = seq2[m]
+                        aa2_couple2 = seq2[n+1]
                     
-                    if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
-                        and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
-                        for aa1_ in d_acides_amines[aa1_couple1]:
-                            for aa2_ in d_acides_amines[aa2_couple1]:
-                                couple1 = (aa1_, aa2_)
-                                
-                                # prise en compte des acides aminés ambigu afin de les
-                                # "redispatcher"
-                                for aa3 in d_acides_amines[aa1_couple2]:
-                                    for aa4 in d_acides_amines[aa2_couple2]:
-                                        couple2 = (aa3, aa4)
-                                        poids_couples = ( (1/len(d_acides_amines[aa1_])) * (1 / taille_cluster1) 
-                                                        * (1/len(d_acides_amines[aa3])) * (1/taille_cluster2) 
-                                                        * (1/len(d_acides_amines[aa2_])) * (1 / taille_cluster1) 
-                                                        * (1/len(d_acides_amines[aa4])) * (1/taille_cluster2) )
-                                        dFreqPairCouple[tab_index[couple1], tab_index[couple2]] += poids_couples
-                                        dFreqPairCouple[tab_index[couple2], tab_index[couple1]] += poids_couples
+                        if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
+                            and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
+                            for aa1_ in d_acides_amines[aa1_couple1]:
+                                for aa2_ in d_acides_amines[aa2_couple1]:
+                                    couple1 = (aa1_, aa2_)
+                                    
+                                    # prise en compte des acides aminés ambigu afin de les
+                                    # "redispatcher"
+                                    for aa3 in d_acides_amines[aa1_couple2]:
+                                        for aa4 in d_acides_amines[aa2_couple2]:
+                                            couple2 = (aa3, aa4)
+                                            poids_couples = ( (((1/len(d_acides_amines[aa1_])) * (1/len(d_acides_amines[aa2_]))) * (1 / taille_cluster1)) 
+                                                            * (((1/len(d_acides_amines[aa3]))  * (1/len(d_acides_amines[aa4])))  * (1 / taille_cluster2)))
+                                            dFreqPairCouple[tab_index[couple1], tab_index[couple2]] += poids_couples
+                                            dFreqPairCouple[tab_index[couple2], tab_index[couple1]] += poids_couples
 
-                                        # Cl : pas sûr pour ce qui est en commentaire en bas
-                                        #      j'ai compté les couples dans tous les sens 
-                                        #      soit (A,D)(A,G), (A,G)(A,D), (G,A)(D,A), (G,A)(A,D), ...
-                                        """
-                                        dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa3, aa4)]]+= poids_couples
-                                        dFreqPairCoupletab_index[(aa3, aa4)], tab_index[(aa2_, aa1_)]]+= poids_couples
-                                        dFreqPairCouple[tab_index[(aa1_, aa2_)], tab_index[(aa4, aa3)]]+= poids_couples
-                                        dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa1_, aa2_)] ]+= poids_couples
-                                        dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa4, aa3)]]+= poids_couples
-                                        dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa2_, aa1_)]]+= poids_couples
-                                        """
+                                            # Cl : pas sûr pour ce qui est en commentaire en bas
+                                            #      j'ai compté les couples dans tous les sens 
+                                            #      soit (A,D)(A,G), (A,G)(A,D), (G,A)(D,A), (G,A)(A,D), ...
+                                            """
+                                            dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa3, aa4)]]+= poids_couples
+                                            dFreqPairCoupletab_index[(aa3, aa4)], tab_index[(aa2_, aa1_)]]+= poids_couples
+                                            dFreqPairCouple[tab_index[(aa1_, aa2_)], tab_index[(aa4, aa3)]]+= poids_couples
+                                            dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa1_, aa2_)] ]+= poids_couples
+                                            dFreqPairCouple[tab_index[(aa2_, aa1_)], tab_index[(aa4, aa3)]]+= poids_couples
+                                            dFreqPairCouple[tab_index[(aa4, aa3)], tab_index[(aa2_, aa1_)]]+= poids_couples
+                                            """
 
 
     # Enfin je calcule la freq des pairs de couples d'AA
     Spair = (1/2)*(np.sum(dFreqPairCouple) + np.trace(dFreqPairCouple))
 
-    for l in range(len(dFreqPairCouple)):
+    for line in range(len(dFreqPairCouple)):
         for col in range(len(dFreqPairCouple)):
             if Spair != 0:
-                dFreqPairCouple[l][col] = dFreqPairCouple[l][col] / Spair
+                dFreqPairCouple[line][col] = dFreqPairCouple[line][col] / Spair
                 # ici j'ajoute dans la matrice qui va contenir 
                 # les freq contenues dans tous les fichiers du dossier
-                dFreqPair[l][col]+= dFreqPairCouple[l][col]
+                dFreqPair[line][col]+= dFreqPairCouple[line][col]
 
 
     return dFreqPair

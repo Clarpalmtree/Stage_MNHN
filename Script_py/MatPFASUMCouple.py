@@ -36,6 +36,7 @@ indice = 0
 for aa in liste_aa:
     for aa2 in liste_aa:
         tab_index[(aa, aa2)] = indice
+        tab_index[(aa2, aa)] = indice # même indice pour (A,B) que pour (B,A)
         tab_couple.append((aa,aa2))
         indice += 1
 
@@ -56,10 +57,13 @@ def FreqPairCouple(dFreqPair, liSeqAli):
 
     dFreqPairCouple = np.zeros((400, 400))
 
+
     for i in range(len(liSeqAli)):
         name1, seq1 = liSeqAli[i]
         cluster_name_1 = int(name1.split()[0])
         taille_cluster1 = int(name1.split()[1])
+    
+        L = len(seq1) # la longueur est la même pour toutes les séquences : on la mesure une seule fois
 
         for j in range(i+1, len(liSeqAli)):
             name2, seq2 = liSeqAli[j]
@@ -68,15 +72,18 @@ def FreqPairCouple(dFreqPair, liSeqAli):
 
             # on calcule les pairs entre les clusters
             if cluster_name_2 != cluster_name_1:
-                for (k,m) in zip(range(len(seq1)-1), range(len(seq2)-1)):
-                    for (l,n) in zip(range(len(seq1)-1), range(len(seq2)-1)):
+                # on n'a besoin que de deux indices : k et l, on s'intéresse à la substitution (seq1[k],seq1[l]) par (seq2[k],seq2[l])
+                for k in range(L-1):
+                    for l in range(k+1,L): # l va de k+1 à L pour éviter de tout compter deux fois (et on ne s'intéresse pas à la substitution (k,k) : on l'a déjà avec les probabilités de substitution simples)
                         aa1_couple1 = seq1[k]
-                        aa2_couple1 = seq1[l+1]
-                        aa1_couple2 = seq2[m]
-                        aa2_couple2 = seq2[n+1]
+                        aa2_couple1 = seq1[l]
+                        aa1_couple2 = seq2[k]
+                        aa2_couple2 = seq2[l]
                     
-                        if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
-                            and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
+                        #if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
+                        #    and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
+                        # c'est long de parcourir toute une liste pour vérifier si quelque chose est dedans. Ici tu le fais uniquement pour vérifier que les lettres ne sont pas des gaps, donc vérifie le directement :
+                        if (aa1_couple1!='-') and (aa2_couple1!='-') and (aa1_couple2!='-') and (aa2_couple2!='-'):
                             for aa1_ in d_acides_amines[aa1_couple1]:
                                 for aa2_ in d_acides_amines[aa2_couple1]:
                                     couple1 = (aa1_, aa2_)
@@ -107,13 +114,17 @@ def FreqPairCouple(dFreqPair, liSeqAli):
     # Enfin je calcule la freq des pairs de couples d'AA
     Spair = (1/2)*(np.sum(dFreqPairCouple) + np.trace(dFreqPairCouple))
 
-    for line in range(len(dFreqPairCouple)):
-        for col in range(len(dFreqPairCouple)):
-            if Spair != 0:
-                dFreqPairCouple[line][col] = dFreqPairCouple[line][col] / Spair
-                # ici j'ajoute dans la matrice qui va contenir 
-                # les freq contenues dans tous les fichiers du dossier
-                dFreqPair[line][col]+= dFreqPairCouple[line][col]
+   # for line in range(len(dFreqPairCouple)):
+   #     for col in range(len(dFreqPairCouple)):
+   #         if Spair != 0:
+   #             dFreqPairCouple[line][col] = dFreqPairCouple[line][col] / Spair
+   #             # ici j'ajoute dans la matrice qui va contenir 
+   #             # les freq contenues dans tous les fichiers du dossier
+   #             dFreqPair[line][col]+= dFreqPairCouple[line][col]
+
+   # inutile, tu peux le faire en une seule ligne :
+    if Spair !=0 :
+        dFreqPair+=dFreqPairCouple/Spair
 
 
     return dFreqPair
@@ -133,7 +144,7 @@ def FreqSimple(matCouple):
         dFreqSimple.append((1/2)*(np.sum(matCouple[a_index, :])+(matCouple[a_index, a_index])))
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimplePCouple31"
+    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimplePCouple43"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -158,15 +169,18 @@ def MultiFreqCouple(directory) :
         dFreqPairCouple = FreqPairCouple(dFreqPairCouple, seq )
         tot +=1
 
-    for l in range(400) :
-        for col in range(400) :
-            # je divise par le nombre de fichiers pour avoir la fréquence des couples
-            # sur l'ensemble des fichiers contenues dans le dossier
-            dFreqPairCouple[l][col] = dFreqPairCouple[l][col] /tot
+#    for l in range(400) :
+#        for col in range(400) :
+#            # je divise par le nombre de fichiers pour avoir la fréquence des couples
+#            # sur l'ensemble des fichiers contenues dans le dossier
+#            dFreqPairCouple[l][col] = dFreqPairCouple[l][col] /tot
+
+      # peut être fait en une ligne:
+    dFreqPairCouple = dFreqPairCouple/tot
 
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqCouple = f"{path_folder_Result}/new_PFASUM_freqPCouple31"
+    path_freqCouple = f"{path_folder_Result}/new_PFASUM_freqPCouple43"
     np.save(path_freqCouple, dFreqPairCouple) 
 
 
@@ -189,7 +203,7 @@ def peij(dFreqSimple) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_eij = f"{path_folder_Result}/new_PFASUM_eijPCouple31"
+    path_eij = f"{path_folder_Result}/new_PFASUM_eijPCouple43"
     np.save(path_eij, peij) 
  
 
@@ -218,7 +232,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
                 mat[l][col] = 0
 
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_matrix = f"{path_folder_Result}/new_PFASUM_scorePCouple31"
+    path_matrix = f"{path_folder_Result}/new_PFASUM_scorePCouple43"
     np.save(path_matrix, mat) 
 
 
@@ -262,11 +276,11 @@ def heatmap(titre, matrix, path_folder):
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/"
 
-directory = main_path + "/Cluster31"
+directory = main_path + "/Cluster43_upper"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_Pair31"
+titre = "PFASUM_Pair43"
 path_folder = main_path + dossier + "result"
 
 
@@ -279,9 +293,6 @@ t.start()
 mat_pairCouple = MultiFreqCouple(directory)
 freqsimple = FreqSimple(mat_pairCouple)
 Peij = peij(freqsimple)
-# je met un scaling factor de 2 car c'est ce qu'ils font dans l'article
-# "Amino acid substitution matrice from protein blocks"
-# "Lod ratios are multiplied by a scaling factor of 2 ..."
 matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
 print(matrix)
 print(Visualisation(matrix))

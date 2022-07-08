@@ -337,25 +337,3 @@ def nb_Cluster(path_folder_Cluster) :
         count_Cluster += len(nb_Cluster)
 
     return count_Cluster
-
-
-main_path = "/home/ctoussaint"
-dossier = "/Stage_MNHN/"
-
-directory = main_path + "/Cluster31_upper"
-directory = Path(directory)
-directory = directory.iterdir()
-
-titre = "___PFASUM31___"
-path_folder = main_path + "/result_upper"
-
-t = Timer()
-t.start()
-
-mat_pair = MultiFreqPair(directory)
-freqsimple = FreqSimple(mat_pair)
-Peij = peij(freqsimple)
-matrix = computeMatrixPFASUM(Peij, mat_pair, 1)
-heatmap(titre, matrix, path_folder)
-
-t.stop("Fin construction Matrice PFASUM Couple")

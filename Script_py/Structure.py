@@ -1,8 +1,8 @@
-from Bio.PDB import *
 from readFasta import readFastaMul
 from pathlib import Path
 import numpy as np
 from timer import Timer
+import os.path
 
 
 def get_code_pfam(directory) :
@@ -79,7 +79,37 @@ def nbr_aa(directory):
 
     return liste, L
 
+def nbr_structure(dico):
 
+    L=[]
+
+    for ele in dico :
+        tot=0
+        for pdb in dico[ele] :
+            file = "/home/ctoussaint/Stage_MNHN/pdb_10_file/pdb" + pdb + ".ent"
+
+            if os.path.exists(file) : 
+                f = open(file, "r")
+                lines = f.readlines()
+                f.close()
+
+                liste = []
+                for li in lines :   
+                    if li[0:6] == 'COMPND' and li[11:16] == 'CHAIN':
+                        chaine = li[18:].split()
+                        for ch in chaine :
+                            chaine = ch.strip(',')
+                            chaine = chaine.strip(';')
+                            liste.append(chaine)
+
+                        tot+=len(liste)
+                        break 
+
+        L.append((ele, tot))
+
+        
+
+    return L 
 
 
 def tri_selection(tab):
@@ -142,7 +172,7 @@ def liste_pdb_dix(dico, liste_dix) :
 
 file = "/home/ctoussaint/pdb_pfam_mapping.txt"
 file_dico = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/dico_pdb_pfam.npy"
-file_liste_pdb = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/liste_pdb___.npy"
+file_liste_pdb = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/liste_trie.npy"
 directory = "/home/ctoussaint/Pfam_fasta"
 directory = Path(directory)
 directory = directory.iterdir()
@@ -150,17 +180,12 @@ directory = directory.iterdir()
 
 t = Timer()
 t.start()
-"""
-kol, liste_pfam = nbr_aa(directory)
-liste = tri_selection(kol)
-
-liste_dix = np.load(file_liste_pdb, allow_pickle= 'TRUE')
+iste_dix = np.load(file_liste_pdb, allow_pickle= 'TRUE')
 dico = np.load(file_dico, allow_pickle= 'TRUE').item()
-liste_pdb = liste_pdb_dix(dico, liste_dix)
-print(liste_pdb)
-
-t.stop("Fin")
-"""
-
-liste_pdb = np.load(file_liste_pdb, allow_pickle= 'TRUE')
+kol = nbr_structure(dico)
+liste = tri_selection(kol)
+print(liste)
+liste_dix = liste_dix_(liste)
+print(liste_dix)
+t.stop("Fin")d(file_liste_pdb, allow_pickle= 'TRUE')
 print(liste_pdb)

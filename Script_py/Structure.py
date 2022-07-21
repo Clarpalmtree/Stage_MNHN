@@ -1,17 +1,10 @@
-<<<<<<< HEAD
-from Bio.PDB import *
-=======
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
+
 from readFasta import readFastaMul
 from pathlib import Path
 import numpy as np
 from timer import Timer
 import os.path
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
 def get_code_pfam(directory) :
 
     L = []
@@ -93,11 +86,10 @@ def nbr_structure(dico):
     for ele in dico :
         tot=0
         for pdb in dico[ele] :
-<<<<<<< HEAD
+
             file = "/home/ctoussaint/pdb_file/pdb" + pdb + ".ent"
-=======
+
             file = "/home/ctoussaint/Stage_MNHN/pdb_10_file/pdb" + pdb + ".ent"
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
 
             if os.path.exists(file) : 
                 f = open(file, "r")
@@ -123,10 +115,6 @@ def nbr_structure(dico):
     return L 
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
 def tri_selection(tab):
     for i in range(len(tab)):
       # Trouver le min
@@ -166,26 +154,23 @@ def liste_dix_(liste) :
 def liste_pdb_dix(dico, liste_dix) : 
 
     liste_pdb = []
-<<<<<<< HEAD
+
     for ele in liste_dix :
         for ele2 in dico :
-=======
+
     for ele in dico :
         for ele2 in liste_dix :
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
+
             if ele == ele2 :
                 liste_pdb.append(dico[ele])
 
-
-<<<<<<< HEAD
     liste_pdb__ = np.array(liste_pdb, dtype=object )
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
     path_dico = f"{path_folder_Result}/liste_code_pdb"
-=======
+
     liste_pdb__ = np.array(liste_pdb)
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
     path_dico = f"{path_folder_Result}/liste_pdb___"
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
     np.save(path_dico, liste_pdb__)
 
     return liste_pdb
@@ -199,10 +184,9 @@ def liste_pdb_dix(dico, liste_dix) :
 file = "/home/ctoussaint/pdb_pfam_mapping.txt"
 file_dico = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/dico_pdb_pfam.npy"
 file_liste_pdb = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/liste_trie.npy"
-<<<<<<< HEAD
+
 file_liste_dix = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam/liste10_pfam.npy"
-=======
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
+
 directory = "/home/ctoussaint/Pfam_fasta"
 directory = Path(directory)
 directory = directory.iterdir()
@@ -210,7 +194,6 @@ directory = directory.iterdir()
 
 t = Timer()
 t.start()
-<<<<<<< HEAD
 dico = np.load(file_dico, allow_pickle= 'TRUE').item()
 #kol = nbr_structure(dico)
 ##liste = np.load(file_liste_pdb, allow_pickle= 'TRUE').item()
@@ -404,14 +387,4 @@ dico = {'PF19086' : ['1dgp', '1di1', '1hm4', '1hm7', '1ps1', '2e4o', '2oa6', '3b
 
 
 """
-=======
-iste_dix = np.load(file_liste_pdb, allow_pickle= 'TRUE')
-dico = np.load(file_dico, allow_pickle= 'TRUE').item()
-kol = nbr_structure(dico)
-liste = tri_selection(kol)
-print(liste)
-liste_dix = liste_dix_(liste)
-print(liste_dix)
-t.stop("Fin")d(file_liste_pdb, allow_pickle= 'TRUE')
-print(liste_pdb)
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
+

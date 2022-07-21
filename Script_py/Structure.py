@@ -89,8 +89,6 @@ def nbr_structure(dico):
 
             file = "/home/ctoussaint/pdb_file/pdb" + pdb + ".ent"
 
-            file = "/home/ctoussaint/Stage_MNHN/pdb_10_file/pdb" + pdb + ".ent"
-
             if os.path.exists(file) : 
                 f = open(file, "r")
                 lines = f.readlines()
@@ -116,6 +114,7 @@ def nbr_structure(dico):
 
 
 def tri_selection(tab):
+
     for i in range(len(tab)):
       # Trouver le min
         min = i
@@ -158,9 +157,6 @@ def liste_pdb_dix(dico, liste_dix) :
     for ele in liste_dix :
         for ele2 in dico :
 
-    for ele in dico :
-        for ele2 in liste_dix :
-
             if ele == ele2 :
                 liste_pdb.append(dico[ele])
 
@@ -168,9 +164,6 @@ def liste_pdb_dix(dico, liste_dix) :
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
     path_dico = f"{path_folder_Result}/liste_code_pdb"
 
-    liste_pdb__ = np.array(liste_pdb)
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
-    path_dico = f"{path_folder_Result}/liste_pdb___"
     np.save(path_dico, liste_pdb__)
 
     return liste_pdb

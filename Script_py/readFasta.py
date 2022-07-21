@@ -9,7 +9,7 @@ def readFastaMul(nomFi):
         lesSeq=[]
         for l in f:
             #Ne pas oublier d'enlever si nécessaire le retour chariot a la fin des lignes
-            if l[-1]=='\n':
+            if l[-1]=='\n': 
                 l=l[:-1]
             if l[0] == '>':
                 if seq != []:

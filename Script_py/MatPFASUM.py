@@ -62,7 +62,7 @@ def FreqPair( dFreqPairAA, liSeqAli ):
             #on calcule les pairs entre les clusters
             if cluster_name_2 != cluster_name_1 : 
                 for (aa1, aa2) in zip(seq1, seq2):
-                    if (aa1 !='-') and (aa2!='-') :
+                    if (aa1 !='-') and (aa1 != 'O') and (aa1 != 'U') and (aa2!='-') and (aa2 != 'O') and (aa2 != 'U'):
 
                         # prise en compte des acides aminés ambigu afin de les
                         # "redispatcher"
@@ -105,7 +105,7 @@ def FreqSimple(matPair):
         dFreqSimple.append((1/2)*(np.sum(matPair[a_index, :])+(matPair[a_index, a_index])))
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple31"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple43"
     np.save(path_freqSimple, dFreqSimple) 
 
     print("somme freq simple", np.sum(dFreqSimple))
@@ -138,7 +138,7 @@ def MultiFreqPair(directory) :
             dFreqPair[l][col] = dFreqPair[l][col] /tot
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair31"
+    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair43"
     np.save(path_freqPair, dFreqPair) 
     print("somme pair =", np.sum(dFreqPair))
 
@@ -164,7 +164,7 @@ def peij(dFreqSimple) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_eij = f"{path_folder_Result}/PFASUM_eij31"
+    path_eij = f"{path_folder_Result}/PFASUM_eij43"
     np.save(path_eij, peij) 
     print(np.sum(peij))
 
@@ -185,7 +185,7 @@ def peij_bis(dFreqSimple) :
     peij = np.outer(dFreqSimple, np.transpose(dFreqSimple))
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_eij = f"{path_folder_Result}/PFASUM_eij31"
+    path_eij = f"{path_folder_Result}/PFASUM_eij43"
     np.save(path_eij, peij) 
     print(np.sum(peij))
 
@@ -206,7 +206,7 @@ def FreqSimple_bis(matPair):
         dFreqSimple.append((np.sum(matPair[a_index, :])))
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple31"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple43"
     np.save(path_freqSimple, dFreqSimple) 
 
     print("somme freq simple", np.sum(dFreqSimple))
@@ -337,3 +337,27 @@ def nb_Cluster(path_folder_Cluster) :
         count_Cluster += len(nb_Cluster)
 
     return count_Cluster
+
+
+main_path = "/home/ctoussaint"
+dossier = "/Stage_MNHN/"
+
+directory = main_path + "/Cluster43_upper"
+directory = Path(directory)
+directory = directory.iterdir()
+
+titre = "___PFASUM43___"
+path_folder = main_path + "/result_upper"
+
+t = Timer()
+t.start()
+
+mat_pair = MultiFreqPair(directory)
+freqsimple = FreqSimple(mat_pair)
+Peij = peij(freqsimple)
+matrix = computeMatrixPFASUM(Peij, mat_pair, 1)
+heatmap(titre, matrix, path_folder)
+
+t.stop("Fin construction Matrice PFASUM Couple")
+
+print(entropy())

@@ -83,7 +83,8 @@ def FreqPairCouple(dFreqPair, liSeqAli):
                         #if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
                         #    and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
                         # c'est long de parcourir toute une liste pour vérifier si quelque chose est dedans. Ici tu le fais uniquement pour vérifier que les lettres ne sont pas des gaps, donc vérifie le directement :
-                        if (aa1_couple1!='-') and (aa2_couple1!='-') and (aa1_couple2!='-') and (aa2_couple2!='-'):
+                        if ( (aa1_couple1!='-') and (aa1_couple1!='U') and (aa1_couple1!='0') and (aa2_couple1!='-') and (aa2_couple1!='U') and (aa2_couple1!='0') and 
+                             (aa1_couple2!='-') and (aa1_couple2!='U') and (aa1_couple2!='0') and (aa2_couple2!='-') and (aa2_couple2!='U') and (aa2_couple2!='0') ):
                             for aa1_ in d_acides_amines[aa1_couple1]:
                                 for aa2_ in d_acides_amines[aa2_couple1]:
                                     couple1 = (aa1_, aa2_)
@@ -143,8 +144,8 @@ def FreqSimple(matCouple):
     for a_index in range(400):
         dFreqSimple.append((1/2)*(np.sum(matCouple[a_index, :])+(matCouple[a_index, a_index])))
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqSimple = f"{path_folder_Result}/new_PFASUM_freqSimplePCouple43"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermediaire"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimplePCouple31_int"
     np.save(path_freqSimple, dFreqSimple) 
 
 
@@ -163,11 +164,24 @@ def MultiFreqCouple(directory) :
     dFreqPairCouple = np.zeros((400,400))
     
     tot = 0
+    count = 0
+    inter= 0
     for files in directory :
         seq = readFastaMul(files)
         #j'ajoute les fréquences dans mon tableau de tous les fichiers
         dFreqPairCouple = FreqPairCouple(dFreqPairCouple, seq )
         tot +=1
+        count+=1
+        
+        if count == 50 :
+            inter+=1
+            name = "freqPCouple31_" + str(inter)
+            dFreqPairCouple_intermediaire = dFreqPairCouple/tot
+            path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermediaire"
+            path_freqCouple = f"{path_folder_Result}/{name}"
+            np.save(path_freqCouple, dFreqPairCouple_intermediaire) 
+            count = 0
+
 
 #    for l in range(400) :
 #        for col in range(400) :
@@ -179,15 +193,14 @@ def MultiFreqCouple(directory) :
     dFreqPairCouple = dFreqPairCouple/tot
 
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_freqCouple = f"{path_folder_Result}/new_PFASUM_freqPCouple43"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermédiaire"
+    path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple31_int"
     np.save(path_freqCouple, dFreqPairCouple) 
 
 
     return dFreqPairCouple
 
     
-43
 ### FONCTION CALCULE DES FRÉQUENCES DES PAIRS DE COUPLE D'AA.........................................................................................
 #....................................................................................................................................................
 def peij(dFreqSimple) :
@@ -202,8 +215,8 @@ def peij(dFreqSimple) :
     for a in range(len(peij)) :
         peij[a,a] = dFreqSimple[a]*dFreqSimple[a]
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_eij = f"{path_folder_Result}/new_PFASUM_eijPCouple43"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermediaire"
+    path_eij = f"{path_folder_Result}/PFASUM_eijPCouple31_int"
     np.save(path_eij, peij) 
  
 
@@ -231,8 +244,8 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
             else:
                 mat[l][col] = 0
 
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result"
-    path_matrix = f"{path_folder_Result}/new_PFASUM_scorePCouple43"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermediaire"
+    path_matrix = f"{path_folder_Result}/PFASUM_scorePCouple31_int"
     np.save(path_matrix, mat) 
 
 
@@ -270,17 +283,37 @@ def heatmap(titre, matrix, path_folder):
 
 
 
+def entropy(mat_pair, tab_lod_ratio, freq_simple):
+    """
+        input : matrice de pair d'AA et la matrice des lods ratios
+        output : entropie de la matrice de substitution
+    """
+    
+    relative_entropy=0
+    exp_score = 0
+
+    for i in range(len(mat_pair)):
+        for j in range(i+1):
+            relative_entropy += mat_pair[i][j] * tab_lod_ratio[i][j]
+            exp_score += (freq_simple[i] * freq_simple[j] * tab_lod_ratio[i][j])
+
+    relative_entropy = round(relative_entropy, 4)
+    exp_score = round(exp_score, 4)
+
+
+    return relative_entropy, exp_score
+
 ### VARIABLE GLOBAL POUR CALCULER ET STOCKER LA MATRICE..............................................................................................
 #....................................................................................................................................................
 
 main_path = "/home/ctoussaint"
 dossier = "/Stage_MNHN/"
 
-directory = main_path + "/Cluster43_upper"
+directory = main_path + "/Cluster31_upper"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_Pair43"
+titre = "PFASUM_Pair31"
 path_folder = main_path + dossier + "result"
 
 
@@ -290,12 +323,19 @@ path_folder = main_path + dossier + "result"
 t = Timer()
 t.start()
 
-mat_pairCouple = MultiFreqCouple(directory)
+file_31 = "/home/ctoussaint/intermediaire/freqPCouple31_13.npy"
+file_43 = "/home/ctoussaint/intermediaire/freqPCouple43_13.npy"
+file_60 = "/home/ctoussaint/intermediaire/freqPCouple60_13.npy"
+path_intermediaire = "/home/ctoussaint/Stage_MNHN/intermediaire"
+
+mat_pairCouple = np.load(file_31, allow_pickle='TRUE')
 freqsimple = FreqSimple(mat_pairCouple)
 Peij = peij(freqsimple)
 matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
 print(matrix)
 print(Visualisation(matrix))
-heatmap(titre, matrix, path_folder)
+heatmap(titre, matrix, path_intermediaire)
+
+print(entropy(mat_pairCouple, matrix, freqsimple))
 
 t.stop("Fin construction Matrice PFASUM Couple")

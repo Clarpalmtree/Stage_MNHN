@@ -1,4 +1,4 @@
-
+from Bio.PDB import *
 from readFasta import readFastaMul
 from pathlib import Path
 import numpy as np
@@ -79,6 +79,99 @@ def nbr_aa(directory):
 
     return liste, L
 
+
+def PDB_parser(infile):
+    """version adaptee du parser PDB qui est retourne
+            - un dico PDB (meme format que d'habitude
+            input: nom du fichier pdb
+            output : dPDB (dico PDB)
+
+            """
+    # lecture du fichier PDB
+    # -----------------------
+    f = open(infile, "r")
+    lines = f.readlines()
+    f.close()
+
+    # var ini
+    # ---------
+    dPDB = {}
+    atomlist = []
+    dPDB["chains"] = []
+
+    # parcoure le PDB
+    # -----------------
+    for line in lines:
+        if line[0:4] == "ATOM":
+
+            # on recupere l'info de la chaine
+            chain = line[21]
+
+            # si la chaine n'existe pas, on cree la cle correspondante et on ajoute la chaine a la liste des chaines
+            if not chain in dPDB["chains"]:
+                dPDB["chains"].append(chain)  # ajout de "chain" a la liste des chaines
+                dPDB[chain] = {}  # creation du sous-dico pour la chaine
+                # on prepare la structure de donnees pour cette chaine
+                dPDB[chain]["reslist"] = []
+
+            # on recupere l'info du residu
+            curres = "%s" % (line[22:26]).strip()
+
+            # si le residu pour cette chaine "chain" n'existe pas, on cree la cle correspondante et on ajoute le res a la liste des res
+            if not curres in dPDB[chain]["reslist"]:
+                dPDB[chain]["reslist"].append(curres)
+                dPDB[chain][curres] = {}
+                # on prepare la structure de donnees pour ce residu
+                dPDB[chain][curres]["atomlist"] = []
+                # on recupere l'info du residu
+                dPDB[chain][curres]["resname"] = line[17:20].strip()
+
+
+            # on recupere les info pour l'atome de ce res de cette chaine (type atomique + coords x, y, z)
+            atomtype = line[12:16].strip()
+            dPDB[chain][curres]["atomlist"].append(atomtype)
+            dPDB[chain][curres][atomtype] = {}
+            dPDB[chain][curres][atomtype]["x"] = float(line[30:38])
+            dPDB[chain][curres][atomtype]["y"] = float(line[38:46])
+            dPDB[chain][curres][atomtype]["z"] = float(line[46:54])
+            dPDB[chain][curres][atomtype]["id"] = line[6:11].strip()
+            dPDB[chain][curres][atomtype]["bfactor"] = line[60:67].strip()
+
+
+    return dPDB
+
+
+######################################
+#
+#           extract info from PDB
+#
+########################################
+
+
+# ceci est une possibilite, vous pouviez aussi renvoyer la sortie avec une liste de listes
+# de type [[chainname, nb_aa1],[chainname, nb_aa2],etc] --> [["A", 23],["B", 29],["C", 11]]
+def getNbstruct(dico):
+
+    # init var
+    liste = []
+    count= 0
+    for ele in dico :
+        tot=0
+        for pdb in dico[ele] :
+            file = "/home/ctoussaint/pdb_file/pdb" + pdb + ".ent"
+
+            if os.path.exists(file) : 
+                dict = PDB_parser(file)
+                for chaini in dict["chains"]:
+                    count +=1
+        
+        liste.append((ele, count))
+
+        
+
+    return liste
+
+
 def nbr_structure(dico):
 
     L=[]
@@ -127,7 +220,7 @@ def tri_selection(tab):
         tab[min] = tmp
 
     Tab = np.array(tab, dtype= object)
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_liste_trie= f"{path_folder_Result}/liste_trie"
     np.save(path_liste_trie, Tab)
 
@@ -142,7 +235,7 @@ def liste_dix_(liste) :
 
 
     liste_dix__ = np.array(liste_dix, dtype= object)
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_dico = f"{path_folder_Result}/liste10_pfam"
     np.save(path_dico, liste_dix__)
 
@@ -161,13 +254,29 @@ def liste_pdb_dix(dico, liste_dix) :
                 liste_pdb.append(dico[ele])
 
     liste_pdb__ = np.array(liste_pdb, dtype=object )
-    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_pfam"
+    path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_dico = f"{path_folder_Result}/liste_code_pdb"
 
     np.save(path_dico, liste_pdb__)
 
     return liste_pdb
 
+
+def get_contact(liste_dix) :
+
+    p = PDBParser()
+
+    
+    for i in range(len(liste_dix)) : 
+        for j in range(len(liste_dix[i])) :
+            file_pdb = "/home/ctoussaint/pdb_file/pdb"  + liste_dix[i][j] + ".ent"
+            structure = p.get_structure("X", file_pdb)
+            for model in structure:
+                for chain in model:
+                    for residue in chain:
+                        print(residue)
+
+    
 
 
 ## MAIN ________________________________________________________________________________
@@ -188,13 +297,14 @@ directory = directory.iterdir()
 t = Timer()
 t.start()
 dico = np.load(file_dico, allow_pickle= 'TRUE').item()
-#kol = nbr_structure(dico)
-##liste = np.load(file_liste_pdb, allow_pickle= 'TRUE').item()
-#print(liste)
-liste_dix =  np.load(file_liste_dix, allow_pickle= 'TRUE')
+kol = getNbstruct(dico)
+liste = tri_selection(kol)
+print(liste)
+liste_dix = liste_dix_(liste)
+print(liste_dix)
 liste_pdb_dix_ = liste_pdb_dix(dico, liste_dix)
-print(liste_pdb_dix_)
 
+"""
 liste = []
 count= 0
 for i in range(len(liste_pdb_dix_)) :
@@ -204,10 +314,10 @@ for i in range(len(liste_pdb_dix_)) :
 
     liste.append(count)
     
-print(liste)
-print("nombre ", count)
-print(liste_dix)
+lol = [['1dgp', '1di1'], ['1hm7', '1ps1']]
+get_contact(lol)
 t.stop("Fin")
+"""
 
 
 # petit test

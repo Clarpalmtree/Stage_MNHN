@@ -42,13 +42,14 @@ def get_file_pdb(liste) :
     for pdb in liste :
       pdbl.retrieve_pdb_file(pdb, obsolete=False, pdir="/home/ctoussaint/Stage_MNHN/pdb_file", file_format="pdb", overwrite=False)
 
+"""
 file = "/home/ctoussaint/pdb_pfam_mapping.txt"
 
 directory = "/home/ctoussaint/Pfam_fasta"
 directory = Path(directory)
 directory = directory.iterdir()
 
-<
+
 #liste_pfam = get_code_pfam(directory)
 
 #liste_pdb = get_pdb(file, liste_pfam)
@@ -121,3 +122,4 @@ print(len(liste_pdb))
 
 get_file_pdb(liste_pdb)
 
+"""

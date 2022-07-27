@@ -36,7 +36,6 @@ indice = 0
 for aa in liste_aa:
     for aa2 in liste_aa:
         tab_index[(aa, aa2)] = indice
-        tab_index[(aa2, aa)] = indice # même indice pour (A,B) que pour (B,A)
         tab_couple.append((aa,aa2))
         indice += 1
 
@@ -83,8 +82,8 @@ def FreqPairCouple(dFreqPair, liSeqAli):
                         #if ( aa1_couple1 in liste_aa_ambigu and aa2_couple1 in liste_aa_ambigu 
                         #    and aa1_couple2 in liste_aa_ambigu and aa2_couple2 in liste_aa_ambigu ):
                         # c'est long de parcourir toute une liste pour vérifier si quelque chose est dedans. Ici tu le fais uniquement pour vérifier que les lettres ne sont pas des gaps, donc vérifie le directement :
-                        if ( (aa1_couple1!='-') and (aa1_couple1!='U') and (aa1_couple1!='0') and (aa2_couple1!='-') and (aa2_couple1!='U') and (aa2_couple1!='0') and 
-                             (aa1_couple2!='-') and (aa1_couple2!='U') and (aa1_couple2!='0') and (aa2_couple2!='-') and (aa2_couple2!='U') and (aa2_couple2!='0') ):
+                        if ( (aa1_couple1!='-') and (aa1_couple1!='U') and (aa1_couple1!='O') and (aa2_couple1!='-') and (aa2_couple1!='U') and (aa2_couple1!='O') and 
+                             (aa1_couple2!='-') and (aa1_couple2!='U') and (aa1_couple2!='O') and (aa2_couple2!='-') and (aa2_couple2!='U') and (aa2_couple2!='O') ):
                             for aa1_ in d_acides_amines[aa1_couple1]:
                                 for aa2_ in d_acides_amines[aa2_couple1]:
                                     couple1 = (aa1_, aa2_)
@@ -98,6 +97,7 @@ def FreqPairCouple(dFreqPair, liSeqAli):
                                                             * (((1/len(d_acides_amines[aa3]))  * (1/len(d_acides_amines[aa4])))  * (1 / taille_cluster2)))
                                             dFreqPairCouple[tab_index[couple1], tab_index[couple2]] += poids_couples
                                             dFreqPairCouple[tab_index[couple2], tab_index[couple1]] += poids_couples
+
 
                                             # Cl : pas sûr pour ce qui est en commentaire en bas
                                             #      j'ai compté les couples dans tous les sens 
@@ -128,7 +128,7 @@ def FreqPairCouple(dFreqPair, liSeqAli):
         dFreqPair+=dFreqPairCouple/Spair
 
 
-    return dFreqPair
+    return dFreqPair, dFreqPairCouple
 
 ### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
 #....................................................................................................................................................
@@ -169,7 +169,7 @@ def MultiFreqCouple(directory) :
     for files in directory :
         seq = readFastaMul(files)
         #j'ajoute les fréquences dans mon tableau de tous les fichiers
-        dFreqPairCouple = FreqPairCouple(dFreqPairCouple, seq )
+        dFreqPairCouple, dicoCompte = FreqPairCouple(dFreqPairCouple, seq )
         tot +=1
         count+=1
         
@@ -180,6 +180,9 @@ def MultiFreqCouple(directory) :
             path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermediaire"
             path_freqCouple = f"{path_folder_Result}/{name}"
             np.save(path_freqCouple, dFreqPairCouple_intermediaire) 
+            name2 = "PFASUM_comptePCouple31_int_" + str(inter)
+            path_compte = f"{path_folder_Result}/{name2}"
+            np.save(path_compte, dicoCompte) 
             count = 0
 
 
@@ -196,6 +199,7 @@ def MultiFreqCouple(directory) :
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/intermédiaire"
     path_freqCouple = f"{path_folder_Result}/PFASUM_freqPCouple31_int"
     np.save(path_freqCouple, dFreqPairCouple) 
+    
 
 
     return dFreqPairCouple
@@ -254,26 +258,44 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
 
 ### FONCTION VISUALISATION D'UNE MATRICE EN DATAFRAME................................................................................................
 #....................................................................................................................................................
-def Visualisation(matrice):
+def Visualisation(matrice,):
 
     df_mat = pd.DataFrame(matrice)
 
     return df_mat
 
 
+def sous_matrice(matrice) :
+
+    mat = np.zeros((20,20))
+    L= []
+
+    for l in range(20) :
+        for k in range(20) :
+            i = l+ 340
+            j= k + 340
+            mat[l][k] = matrice[i][j]
+            
+        L.append(tab_couple[i])
+
+
+    return mat, L
+
+
 ### FONCTION HEATMAP.................................................................................................................................
 #....................................................................................................................................................
-def heatmap(titre, matrix, path_folder):
+def heatmap(titre, matrix, path_folder, liste):
     """
         input : titre du heatmap, matrice et le chemin pour stocker notre heatmap
         outpu : un heatmap de la matrice de substitution PFASUM selon le %id
     """
 
-    x_axis_labels = tab_couple # labels for x-axis
-    y_axis_labels = tab_couple # labels for y-axis
+    x_axis_labels = liste # labels for x-axis
+    y_axis_labels = liste # labels for y-axis
 
     heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
-    heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, annot = True, annot_kws = {"size": 3}, fmt = '.2g')
+    heatmap = sb.heatmap(heatmap_matrix, xticklabels= x_axis_labels, yticklabels= y_axis_labels,
+                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu", vmin = -1, vmax = 10)
     plt.yticks(rotation=0) 
     heatmap_figure = heatmap.get_figure()    
     plt.title(titre)
@@ -313,30 +335,34 @@ directory = main_path + "/Cluster31_upper"
 directory = Path(directory)
 directory = directory.iterdir()
 
-titre = "PFASUM_Pair31"
+titre = "PFASUM_Pair31_intermédiaire"
 path_folder = main_path + dossier + "result"
 
 
 ### CALCUL MATRICE...................................................................................................................................
 #....................................................................................................................................................
 
+
 t = Timer()
 t.start()
+print(tab_index[('W', 'A')])
 
-file_31 = "/home/ctoussaint/intermediaire/freqPCouple31_13.npy"
-file_43 = "/home/ctoussaint/intermediaire/freqPCouple43_13.npy"
-file_60 = "/home/ctoussaint/intermediaire/freqPCouple60_13.npy"
+"""
+#file_31 = "/home/ctoussaint/intermediaire/freqPCouple31_15.npy"
 path_intermediaire = "/home/ctoussaint/Stage_MNHN/intermediaire"
 
-mat_pairCouple = np.load(file_31, allow_pickle='TRUE')
+mat_pairCouple = MultiFreqCouple(directory)
 print(mat_pairCouple)
-#freqsimple = FreqSimple(mat_pairCouple)
-#Peij = peij(freqsimple)
-#matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
-#print(matrix)
-#print(Visualisation(matrix))
-#heatmap(titre, matrix, path_intermediaire)
+freqsimple = FreqSimple(mat_pairCouple)
+Peij = peij(freqsimple)
+matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
+ss_mat, liste= sous_matrice(matrix)
+print("ici", ss_mat)
+print(Visualisation(matrix))
+heatmap(titre, matrix, path_folder, liste)
 
-#print(entropy(mat_pairCouple, matrix, freqsimple))
+print(entropy(mat_pairCouple, matrix, freqsimple))
 
 t.stop("Fin construction Matrice PFASUM Couple")
+"""
+print(np.load("/home/ctoussaint/intermediaire/PFASUM_comptePCouple31_int.npy", allow_pickle= 'TRUE'))

@@ -329,13 +329,14 @@ file_60 = "/home/ctoussaint/intermediaire/freqPCouple60_13.npy"
 path_intermediaire = "/home/ctoussaint/Stage_MNHN/intermediaire"
 
 mat_pairCouple = np.load(file_31, allow_pickle='TRUE')
-freqsimple = FreqSimple(mat_pairCouple)
-Peij = peij(freqsimple)
-matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
-print(matrix)
-print(Visualisation(matrix))
-heatmap(titre, matrix, path_intermediaire)
+print(mat_pairCouple)
+#freqsimple = FreqSimple(mat_pairCouple)
+#Peij = peij(freqsimple)
+#matrix = computeMatrixPFASUM(Peij, mat_pairCouple, 1)
+#print(matrix)
+#print(Visualisation(matrix))
+#heatmap(titre, matrix, path_intermediaire)
 
-print(entropy(mat_pairCouple, matrix, freqsimple))
+#print(entropy(mat_pairCouple, matrix, freqsimple))
 
 t.stop("Fin construction Matrice PFASUM Couple")

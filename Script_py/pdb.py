@@ -40,12 +40,7 @@ def get_file_pdb(liste) :
 
     pdbl = PDBList()
     for pdb in liste :
-<<<<<<< HEAD
-        pdbl.retrieve_pdb_file(pdb, obsolete=False, pdir="/home/ctoussaint/Stage_MNHN/pdb_10_file", file_format="pdb", overwrite=False)
-=======
-        pdbl.retrieve_pdb_file(pdb, obsolete=False, pdir="/home/ctoussaint/Stage_MNHN/pdb_file", file_format="pdb", overwrite=False)
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
-
+      pdbl.retrieve_pdb_file(pdb, obsolete=False, pdir="/home/ctoussaint/Stage_MNHN/pdb_file", file_format="pdb", overwrite=False)
 
 file = "/home/ctoussaint/pdb_pfam_mapping.txt"
 
@@ -53,7 +48,7 @@ directory = "/home/ctoussaint/Pfam_fasta"
 directory = Path(directory)
 directory = directory.iterdir()
 
-<<<<<<< HEAD
+<
 #liste_pfam = get_code_pfam(directory)
 
 #liste_pdb = get_pdb(file, liste_pfam)
@@ -117,11 +112,11 @@ liste_pdb = ['1a8i', '1abb', '1ahp', '1axr', '1b4d', '1bx3', '1c50', '1c8k', '1c
   '7kbj', '7kbr', '7kmp', '7knc', '7kry', '7l9e', '7ofx', '7wj9', '7wja', '7wjb', '7wjc', '7wjd', '7wje', '7wjf', '7wlg',
    '2gp4', '5j83', '5j84', '5j85', '5oyn', '5ym0', '5ze4', '6nte', '6ovt', '7m3k', '4zhj', '5ewu', '6ys9', '6ysg', '6yt0',
     '6ytj', '6ytn', '7c6o', '6l85']
-=======
+
 liste_pfam = get_code_pfam(directory)
 
 liste_pdb = get_pdb(file, liste_pfam)
->>>>>>> b8fef487d71b77f73fa104ad0324d46bfd9a5868
+
 print(len(liste_pdb))
 
 get_file_pdb(liste_pdb)

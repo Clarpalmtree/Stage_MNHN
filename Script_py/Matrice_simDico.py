@@ -4,6 +4,14 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
 
+
+
+### ANCIEN FICHIER POUR LE CALCUL DE MATRICE À L'AIDE DE DICO
+### NE PAS Y FAIRE PLUS ATTENTION MAIS JE LE LAISSE SUR MON GIT AU CAS OÙ
+
+
+
+
 liste_aa_ambi= ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 'L', 'K',
                 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'J', 'Z', 'X']
 

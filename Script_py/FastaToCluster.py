@@ -13,6 +13,7 @@ import os, shutil
 
 ################################################################################
 
+
 if __name__ == '__main__':
 
     #Creation des variables pour le nom des dossier
@@ -52,17 +53,17 @@ if __name__ == '__main__':
         file_name_cluster = accession_num + "_Cluster" + dist + ".fasta"
 
         file_name_cluster =  path_folder_cluster + file_name_cluster 
+
         #Plus la distance est petite plu nos séquence sont proche
         #si l'utilisateur donne 0.60 on donnera à distance_threshold = 0.40
         distance = 1-perID
 
-        #Creation du dico_cluster à partir du clustering
-        #dico_cluster = {0 : [{name : ' ', seq: ' ' }], 1 : [{name:' ', seq : ' '}]}
         liSeqAli = rf.readFastaMul(file_name_fasta)
         matrice = SIM.MatriceSim(liSeqAli, file_name_fasta)
 
+        # dans certain fichier il n'y a qu'une séquence dans on vérifie si notre contient plus qu'1 chiffre
         if len(matrice) > 1 : 
-            #on utilise la liste de numero de cluster renvoyé par Agglomerative
+            # on utilise la liste de numero de cluster renvoyé par Agglomerative
             liste_cluster = list(SIM.Clustering(matrice,distance))
             
             file_cluster = open(file_name_cluster, "w")
@@ -70,13 +71,10 @@ if __name__ == '__main__':
             for i in range( len( liSeqAli ) ) :
 
                 name, seq = liSeqAli[i]
-
                 num_cluster = liste_cluster[i]
                 
                 compt = liste_cluster.count(liste_cluster[i])
                 ligne = '>'+ str(num_cluster) + " " + str(compt) + " "
-                
-
                 result_text = ""
                 
                 # > <num_cluster> <nb_seq> name_seq

@@ -10,6 +10,11 @@ from pathlib import Path
 # J'appelle mes fonctions dans le fichier :
 # Main_Pfasum.py
 
+#A NOTER : POUR "SAUVEGARDER" MES RÉSULTATS JE LE FAIS DANS UN FICHIER NPY, IL FAUT CHANGER LE NOM DES FICHIERS 
+# MANUELLEMENT (je sais c'est chiant), SURTOUT SI ON VEUT FAIRE UNE MATRICE SIMPLE OU UNE MATRICE DE COUPLES D'AA ET AUSSI
+# SI ON VEUT DONNER UN NOM EN FONCTION DU % D'IDENTITE (logique)
+# DONC IL FAUT BIEN VERIFIER AU NIVEAU DES "np.save" LES NOMS DES FICHIERS AVANT DE RUN
+
 ### VARIABLE GLOBAL..................................................................................................................................
 
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
@@ -24,6 +29,7 @@ d_acides_amines = {'Z':['I', 'L'], 'J' :['Q' , 'E'] , 'B' : ['N', 'D'] , 'X' :['
                    'C' : ['C'], 'Q' : ['Q'], 'G' : ['G'], 'H' : ['H'], 'I' : ['I'], 'L' : ['L'], 
                    'K' : ['K'], 'M' : ['M'], 'F' : ['F'], 'P' : ['P'], 'S' : ['S'], 'T' : ['T'], 
                    'W' : ['W'], 'Y' : ['Y'], 'V' : ['V'] }
+
 
 # dico d'indice de nos pairs d'acide aminé
 tab_index = {}
@@ -52,6 +58,7 @@ for aa in liste_aa:
 ### FONCTION CALCULE DE FREQUENCE DE PAIR D'AA.......................................................................................................
 #....................................................................................................................................................
 def FreqPair( dFreqPairAA, liSeqAli ):
+
     """
         input :  une matrice 20x20 vide et une liste de tuple (seq, nom)
         output : un matrice 20x20 : [ [<freq ('A'x'A') >, <freq ('A'x'E')>, <freq ('A'x'D')>,  <freq ('A'x'R')>, ... ], 
@@ -104,9 +111,12 @@ def FreqPair( dFreqPairAA, liSeqAli ):
     return dFreqPairAA
 
 
+
+
 # FONCTION CALCULE DE FREQUENCE DE PAIR DE COUPLE D'AA................................................................................................
 # ....................................................................................................................................................
 def FreqPairCouple(dFreqPair, liSeqAli):
+
     """
         input :  une matrice 400x400 vide et une liste de tuple (seq, nom)
         output : une matrice 400x400: [ [<freq (('A', 'A')x('A', 'A'))>, <freq (('A', 'A')x('A', 'E'))>, 
@@ -190,37 +200,48 @@ def FreqPairCouple(dFreqPair, liSeqAli):
         dFreqPair+=dFreqPairCouple/Spair
 
 
-    return dFreqPair, dFreqPairCouple
+    return dFreqPair
 
 
 
-### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
-#....................................................................................................................................................
-def FreqSimple(matPair):
+
+def MultiFreqPair(directory) :
+
     """
-        input : une matrice de fréquence 20x20 de nos couples d'aa
-        output : une matrice 1x20 de nos aa de la forme :
-                [ <freq('A')> , <freq('E')>, <freq('D')>, <freq('R')>, ... ]
+        input : le chemin dans lequel se trouve tous les fichiers dont on veut les fréquences
+        output : une matrice 20x20 de toutes les fréquences de tous les seeds contenue dans le dossier
     """
 
-    dFreqSimple= []
-    
-    for a_index in range(20):
-        dFreqSimple.append((1/2)*(np.sum(matPair[a_index, :])+(matPair[a_index, a_index])))
+    dFreqPair = np.zeros((20,20))
+
+    tot = 0
+    for files in directory :
+        seq = readFastaMul(files)
+        #j'ajoute les fréquences dans mon tableau de tous les fichiers
+        dFreqPair = FreqPair(dFreqPair, seq )
+        tot +=1
+
+    for l in range(20) :
+        for col in range(20) :
+            # je divise par le nombre de fichiers pour avoir la fréquence des couples
+            # sur l'ensemble des fichiers contenues dans le dossier
+            dFreqPair[l][col] = dFreqPair[l][col] /tot
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple43"
-    np.save(path_freqSimple, dFreqSimple) 
-
-    print("somme freq simple", np.sum(dFreqSimple))
-
-    return dFreqSimple
-    
+    path_freqPair = f"{path_folder_Result}/PFASUM_freqPair43"
+    np.save(path_freqPair, dFreqPair) 
+    print("somme pair =", np.sum(dFreqPair))
 
 
-### FONCTION QUI RENVOIE UNE MATRICE DES FRÉQUENCES DE PAIR DE COUPLE D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER.............................
+    return dFreqPair
+
+
+
+
+### FONCTION QUI RENVOIE UNE MATRICE DES FRÉQUENCES DE COUPLE D'AA DE TOUS LES FICHIERS CONTENUT DANS UN DOSSIER.....................................
 #....................................................................................................................................................
 def MultiFreqCouple(directory) :
+
     """
         input : le chemin dans lequel se trouve tous les fichiers dont on veut les fréquences
         output : une matrice 400x400 de toutes les fréquences de tous les seeds contenue dans le dossier
@@ -234,7 +255,7 @@ def MultiFreqCouple(directory) :
     for files in directory :
         seq = readFastaMul(files)
         #j'ajoute les fréquences dans mon tableau de tous les fichiers
-        dFreqPairCouple, dicoCompte = FreqPairCouple(dFreqPairCouple, seq )
+        dFreqPairCouple= FreqPairCouple(dFreqPairCouple, seq )
         tot +=1
         count+=1
         
@@ -245,9 +266,6 @@ def MultiFreqCouple(directory) :
             path_folder_Result = "/home/ctoussaint/intermediaire"
             path_freqCouple = f"{path_folder_Result}/{name}"
             np.save(path_freqCouple, dFreqPairCouple_intermediaire) 
-            name2 = "PFASUM_comptePCouple31_int_" + str(inter)
-            path_compte = f"{path_folder_Result}/{name2}"
-            np.save(path_compte, dicoCompte) 
             count = 0
 
 
@@ -269,11 +287,39 @@ def MultiFreqCouple(directory) :
 
     return dFreqPairCouple
 
+
+
+
+### FONCTION CALCULE DE FREQUENCE SIMPLE.............................................................................................................
+#....................................................................................................................................................
+def FreqSimple(matPair):
+
+    """
+        input : une matrice de fréquence 20x20 de nos couples d'aa
+        output : une matrice 1x20 de nos aa de la forme :
+                [ <freq('A')> , <freq('E')>, <freq('D')>, <freq('R')>, ... ]
+    """
+
+    dFreqSimple= []
     
+    for a_index in range(20):
+        dFreqSimple.append((1/2)*(np.sum(matPair[a_index, :])+(matPair[a_index, a_index])))
+
+    path_folder_Result = "/home/ctoussaint/result_upper"
+    path_freqSimple = f"{path_folder_Result}/PFASUM_freqSimple43"
+    np.save(path_freqSimple, dFreqSimple) 
+
+    print("somme freq simple", np.sum(dFreqSimple))
+
+    return dFreqSimple
+    
+
+
 
 ### FONCTION CALCULE DES FRÉQUENCES ATTENDUES DES PAIRS D'AA.........................................................................................
 #....................................................................................................................................................
 def peij(dFreqSimple) :
+
     """
         input : un tableau de fréquence 1x20
         output : une matrice 20x20 de la probabilité d'occurence attendue eij
@@ -296,9 +342,12 @@ def peij(dFreqSimple) :
     return peij
 
 
-### FONCTION CALCULE DES FRÉQUENCES ATTENDUES DES PAIRS D'AA.........................................................................................
+
+
+### FONCTION CALCULE DES FRÉQUENCES ATTENDUES DES PAIRS D'AA = AUTRE FAÇON DE LA CALCULER............................................................
 #....................................................................................................................................................
 def peij_bis(dFreqSimple) :
+
     """
         input : un tableau de fréquence 1x20
         output : une matrice 20x20 de la probabilité d'occurence attendue eij
@@ -317,7 +366,13 @@ def peij_bis(dFreqSimple) :
     return peij
 
 
+
+
+### FONCTION CALCUL DE FREQENCE SIMPLE AVEC UNE AUTRE FAÇON DE LA CALCULER...........................................................................
+#....................................................................................................................................................
+
 def FreqSimple_bis(matPair):
+    
     """
         input : une matrice de fréquence 20x20 de nos couples d'aa
         output : une matrice 1x20 de nos aa de la forme :
@@ -339,9 +394,11 @@ def FreqSimple_bis(matPair):
 
     
 
+
 ### FONCTION CALCUL D'UNE MATRICE DE SUBSTITUTION....................................................................................................
 #....................................................................................................................................................
 def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
+
     """ 
         input : matrice 20x20 contenant les eij, matrice 20x20 
                 de la fréquence des pair de couple et le scaling factor
@@ -361,7 +418,7 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
     
 
     path_folder_Result = "/home/ctoussaint/result_upper"
-    path_matrix = f"{path_folder_Result}/PFASUM_NEW_"
+    path_matrix = f"{path_folder_Result}/PFASUM"
     np.save(path_matrix, mat) 
     #print(mat)
 
@@ -370,7 +427,15 @@ def computeMatrixPFASUM(peij, freqPairs, scaling_factor):
 
 
 
+
+### FONCTION CONSTRUCTION D'UNE SOUS-MATRICE.........................................................................................................
+#....................................................................................................................................................
 def sous_matrice(matrice) :
+
+    """
+        input : une matrice de substitution de grande taille (taille 400x400) dans notre cas
+        output : une sous matrice de taille (20x20) 
+    """
 
     mat = np.zeros((20,20))
     L= []
@@ -391,18 +456,22 @@ def sous_matrice(matrice) :
 
 ### FONCTION HEATMAP.................................................................................................................................
 #....................................................................................................................................................
-def heatmap(titre, matrix, path_folder):
+def heatmap(titre, matrix, path_folder, liste):
+
     """
-        input : titre du heatmap, matrice et le chemin pour stocker notre heatmap
+        input : titre du heatmap, matrice, le chemin pour stocker notre heatmap et la liste des indices correspondants 
+                aux aa 
         outpu : un heatmap de la matrice de substitution PFASUM selon le %id
     """
 
-    x_axis_labels = liste_aa # labels for x-axis
-    y_axis_labels = liste_aa # labels for y-axis
+    x_axis_labels = liste # labels for x-axis
+    y_axis_labels = liste # labels for y-axis
 
     heatmap_matrix = pd.DataFrame(matrix).T.fillna(0) 
+    #au niveau du heatmap il faut préciser les valeurs min et max avec vmin et vmax 
+    #ici j'ai mis des valeurs aux hasards 
     heatmap = sb.heatmap(heatmap_matrix, xticklabels=x_axis_labels, yticklabels=y_axis_labels, 
-                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu", vmin = -10, vmax = 5)
+                        annot = True, annot_kws = {"size": 3}, fmt = '.2g',center = 0, cmap="RdBu", vmin = -10, vmax =10)
     plt.yticks(rotation=0) 
     heatmap_figure = heatmap.get_figure()    
     plt.title(titre)
@@ -416,6 +485,7 @@ def heatmap(titre, matrix, path_folder):
 ### FONCTION qui renvoie l'entropie ("désordre") d'une matrice.......................................................................................
 #....................................................................................................................................................
 def entropy(mat_pair, tab_lod_ratio, freq_simple):
+
     """
         input : matrice de pair d'AA et la matrice des lods ratios
         output : entropie de la matrice de substitution
@@ -437,9 +507,11 @@ def entropy(mat_pair, tab_lod_ratio, freq_simple):
 
 
 
+
 ###FONCTION qui renvoie la distance entre deux matrice...............................................................................................
 #....................................................................................................................................................
 def matrix_difference(matrix1, matrix2):
+
     """
         input : matrices avec les lesquelles on veut la distance
         output : distance
@@ -462,11 +534,17 @@ def matrix_difference(matrix1, matrix2):
     return matrix_diff, average_diff 
 
 
+
+
 ###FONCTION qui renvoie le nb de cluster dans les fichiers contenues dans un dossier.................................................................
 #....................................................................................................................................................
 def nb_Cluster(path_folder_Cluster) : 
 
-    
+    """
+        input : le chemin du dossier contenant les fichiers clusterisé à un certain % d'id
+        output : le nombre de cluster contenu dans le dossier des fichiers clusterisé à un certain % d'id
+    """
+
     count_Cluster = 0
 
     for file in path_folder_Cluster :

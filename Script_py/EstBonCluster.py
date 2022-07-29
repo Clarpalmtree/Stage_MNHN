@@ -2,6 +2,9 @@ from Similarite import perID
 from readFasta import readFastaMul
 from pathlib import Path
 
+
+# SCRIPT POUR VERIFIER SI C'EST LE CLUSTER EFFECTUÉ EST COHÉRENT
+
 def BonCluster( liSeqAli ):
 
     for i in range(len(liSeqAli)):

@@ -2,6 +2,8 @@
 #                                  Importations                                #    
 ################################################################################
 
+#SCRIPT DE PAULINE TURK
+
 import os
 from pickle import FALSE
 

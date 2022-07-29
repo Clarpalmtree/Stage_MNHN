@@ -5,21 +5,38 @@ import numpy as np
 from timer import Timer
 import os.path
 
+
+
+### FONCTION qui renvoie une de tous les codes PFAM..................................................................................................
+#....................................................................................................................................................
 def get_code_pfam(directory) :
+
+    """
+        input : le chemin du dossier contenant les fichiers Pfam
+        output : une liste de tous les codes PFAM contenues dans le dossier
+    """
 
     L = []
     for file in directory :
         accession_num = file.name.split(".")[0] 
         L.append(accession_num)
 
+
+
     return L
 
 
 
+
+### FONCTION qui va permettre la création d'un dictionnaire qui va renseigner les correspondances entre les codes pdb et pfam........................
+#....................................................................................................................................................
 def parse_file_pdb_pfam(infile, L):
 
-    ## Fonction qui va permettre la création d'un dictionnaire qui va renseigner
-    ## les correspondances entre les pdb et pfam
+    """
+        input : le fichier avec le mapping des code pfam correspondant au code pdb + le
+                liste des codes PFAM qu'on a dans notre dossier
+        output : un dico de la forme {< code PFAM> : [<code_pdb>, <code_pdb>, ...], <code PFAM> : [<code_pdb>, <code_pdb>, ...], ...}
+    """
     
     try:
         f = open(infile, "r")
@@ -54,39 +71,25 @@ def parse_file_pdb_pfam(infile, L):
 
 
 
+######################################
+#
+#           extract info from PDB
+#
+########################################
 
-def nbr_aa(directory):
 
-    liste = []
-    L = []
 
-    for file in directory:
-        nb_aa = 0
-        accession_num = file.name.split(".")[0]
-        L.append(accession_num)
-        liSeqAli = readFastaMul(file)
-
-        for i in range(len(liSeqAli)):
-            name, seq = liSeqAli[i]
-            for aa in seq:
-                if aa != '-':
-                    nb_aa += 1
-
-        tmp = (accession_num, nb_aa)
-        liste.append(tmp)
-
-        
-
-    return liste, L
-
+### FONCTION que j'ai fait en cours de python pour la bio info structurale avec Anne Lopes...........................................................
+#....................................................................................................................................................
 
 def PDB_parser(infile):
-    """version adaptee du parser PDB qui est retourne
+
+    """     version adaptee du parser PDB qui est retourne
             - un dico PDB (meme format que d'habitude
             input: nom du fichier pdb
             output : dPDB (dico PDB)
 
-            """
+    """
     # lecture du fichier PDB
     # -----------------------
     f = open(infile, "r")
@@ -141,45 +144,25 @@ def PDB_parser(infile):
     return dPDB
 
 
-######################################
-#
-#           extract info from PDB
-#
-########################################
 
 
-# ceci est une possibilite, vous pouviez aussi renvoyer la sortie avec une liste de listes
-# de type [[chainname, nb_aa1],[chainname, nb_aa2],etc] --> [["A", 23],["B", 29],["C", 11]]
-def getNbstruct(dico):
-
-    # init var
-    liste = []
-    count= 0
-    for ele in dico :
-        tot=0
-        for pdb in dico[ele] :
-            file = "/home/ctoussaint/pdb_file/pdb" + pdb + ".ent"
-
-            if os.path.exists(file) : 
-                dict = PDB_parser(file)
-                for chaini in dict["chains"]:
-                    count +=1
-        
-        liste.append((ele, count))
-
-        
-
-    return liste
-
-
+### FONCTION qui donne le nombre de structure pour chaque code PFAM..................................................................................
+#....................................................................................................................................................
 def nbr_structure(dico):
+
+    """
+        input : un dico de la forme {< code PFAM> : [<code_pdb>, <code_pdb>, ...], <code PFAM> : [<code_pdb>, <code_pdb>, ...], ...}
+        output : liste de la forme [(<code PFAM>, <nb de structure>), (<code PFAM>, <nb de structure>), ...]
+    """
 
     L=[]
 
+    #parcours du dico
     for ele in dico :
         tot=0
         for pdb in dico[ele] :
-
+            
+            # on vérifie si le fichier existe bien
             file = "/home/ctoussaint/pdb_file/pdb" + pdb + ".ent"
 
             if os.path.exists(file) : 
@@ -188,7 +171,11 @@ def nbr_structure(dico):
                 f.close()
 
                 liste = []
+
+                #Quand j'ai regardé sur pfam le nb de structure sur leur site correspondant au nb de 
+                #code pdb correspondant avec que le nb de chaîne que ses codes pdb ont 
                 for li in lines :   
+                    #J'ai vu qu'il y avait les chaînes à cet endroit dans le fichier
                     if li[0:6] == 'COMPND' and li[11:16] == 'CHAIN':
                         chaine = li[18:].split()
                         for ch in chaine :
@@ -197,7 +184,12 @@ def nbr_structure(dico):
                             liste.append(chaine)
 
                         tot+=len(liste)
+                        
                         break 
+                        #ici je met un break parce qu'il y a plusieurs ligne 'COMPND avec le 'CHAIN'
+                        #si je ne mettais pas le break j'avais un nb de structures bcp plus élevés que ce que PFAM 
+                        #indiquait. Quand je met le break je trouve le même nb de structure excepté pour certains
+                        #cas que je ne comprends pas forcément
 
         L.append((ele, tot))
 
@@ -206,10 +198,18 @@ def nbr_structure(dico):
     return L 
 
 
+
+
+### FONCTION qui permet de trié dans l'ordre croissant les codes PFAM ayant le plus petit nb de structure au plus grand nb de structure..............
+#....................................................................................................................................................
 def tri_selection(tab):
 
+    """
+        input : liste de la forme [(<code PFAM>, <nb de structure>), (<code PFAM>, <nb de structure>), ...]
+        output : retourne cette même liste mais trié
+    """
+
     for i in range(len(tab)):
-      # Trouver le min
         min = i
         for j in range(i+1, len(tab)):
             if tab[min][1]> tab[j][1]:
@@ -219,6 +219,7 @@ def tri_selection(tab):
         tab[i] = tab[min]
         tab[min] = tmp
 
+    # sauvegarde de ma liste trié 
     Tab = np.array(tab, dtype= object)
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_liste_trie= f"{path_folder_Result}/liste_trie"
@@ -227,23 +228,49 @@ def tri_selection(tab):
     return tab
 
 
+
+
+### FONCTION qui renvoie une liste contenant les dix codes PFAM avec le plus de structures...........................................................
+#....................................................................................................................................................
 def liste_dix_(liste) :
 
+    """
+        input : liste trié de la forme [(<code PFAM>, <nb de structure>), (<code PFAM>, <nb de structure>), ...]
+        output : renvoie la liste des 10 codes PFAM ayant le plus de structures
+                 de la forme [<code PFAM>, <code PFAM>,  <code PFAM>, ... ]
+    """
+
+    #ici je prends juste l'élément 0 de mes tuples dans ma liste, c'est à dire le code PFAM pour avoir
+    #juste une liste des 10 codes PFAM d'intérêt
     liste_dix = [ liste[len(liste)-1][0],liste[len(liste)-2][0], liste[len(liste)-3][0], liste[len(liste)-4][0], 
              liste[len(liste)-5][0], liste[len(liste)-6][0], liste[len(liste)-7][0], liste[len(liste)-8][0], 
              liste[len(liste)-9][0], liste[len(liste)-10][0] ]
 
 
+    # sauvegarde de ma liste contenant les dix codes pfam avec le plus de structures
     liste_dix__ = np.array(liste_dix, dtype= object)
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_dico = f"{path_folder_Result}/liste10_pfam"
     np.save(path_dico, liste_dix__)
 
+
+
     return liste_dix
 
 
 
-def liste_pdb_dix(dico, liste_dix) : 
+
+
+### FONCTION qui renvoie la liste des codes pdb correspondants aux codes PFAM ayant le plus de structures............................................
+#....................................................................................................................................................
+def liste_pdb_dix(dico, liste_dix) :
+
+    """
+        input : le dico de la forme {< code PFAM> : [<code_pdb>, <code_pdb>, ...], <code PFAM> : [<code_pdb>, <code_pdb>, ...], ...}
+                et la liste des dix code PFAM contenant le plus de structures
+        output : liste de liste des codes pdb correspondants aux code PFAM avec le plus de structures de la forme :
+                 [[<code_pdb>, <code_pdb>, ...], [<code_pdb>, <code_pdb>, ...], ...]
+    """ 
 
     liste_pdb = []
 
@@ -253,6 +280,7 @@ def liste_pdb_dix(dico, liste_dix) :
             if ele == ele2 :
                 liste_pdb.append(dico[ele])
 
+    #on sauvegarde la liste des codes pdb d'intéret
     liste_pdb__ = np.array(liste_pdb, dtype=object )
     path_folder_Result = "/home/ctoussaint/Stage_MNHN/result/pdb_bibs"
     path_dico = f"{path_folder_Result}/liste_code_pdb"
@@ -262,21 +290,9 @@ def liste_pdb_dix(dico, liste_dix) :
     return liste_pdb
 
 
-def get_contact(liste_dix) :
 
-    p = PDBParser()
 
-    
-    for i in range(len(liste_dix)) : 
-        for j in range(len(liste_dix[i])) :
-            file_pdb = "/home/ctoussaint/pdb_file/pdb"  + liste_dix[i][j] + ".ent"
-            structure = p.get_structure("X", file_pdb)
-            for model in structure:
-                for chain in model:
-                    for residue in chain:
-                        print(residue)
 
-    
 
 
 ## MAIN ________________________________________________________________________________
@@ -297,27 +313,27 @@ directory = directory.iterdir()
 t = Timer()
 t.start()
 dico = np.load(file_dico, allow_pickle= 'TRUE').item()
-kol = getNbstruct(dico)
+kol = nbr_structure(dico)
 liste = tri_selection(kol)
 print(liste)
 liste_dix = liste_dix_(liste)
 print(liste_dix)
 liste_pdb_dix_ = liste_pdb_dix(dico, liste_dix)
 
-"""
-liste = []
-count= 0
-for i in range(len(liste_pdb_dix_)) :
-    taille = len(liste_pdb_dix_[i])
-    for j in range(taille) :
-        count+=1
 
-    liste.append(count)
-    
-lol = [['1dgp', '1di1'], ['1hm7', '1ps1']]
-get_contact(lol)
-t.stop("Fin")
-"""
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # petit test

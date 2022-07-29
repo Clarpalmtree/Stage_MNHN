@@ -10,6 +10,11 @@ import seaborn as sb
 import matplotlib.pyplot as plt
 import blosum as bl
 
+
+
+# JE NE SAIS PLLUS TROP PK J'AI FAIT CE FICHIER ... SANS DOUTE POUR VERIFIER CERTAINE CHOSE
+# AVEC MON CALCUL DE MATRICE ETC
+
 liste_aa = ['A', 'E', 'D', 'R', 'N', 'C', 'Q', 'G', 'H', 'I', 
             'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
